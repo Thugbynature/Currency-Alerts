@@ -1,8 +1,9 @@
-## Interface: (get from current addon toc)
+## Interface: 70300
 ## Title: Currency Alerts
 ## Version: v0.0.1
 ## Notes: (Update later) v0.0.1
 ## Author: Souless
 ## DefaultState: enabled
 
-CurrencyAlerts.lua
+Currency-Alerts.lua
+Currency-Alerts.xml
