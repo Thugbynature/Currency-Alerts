@@ -24,7 +24,6 @@ local getID
 local save
 local PopulateLines
 local created = {}
-local up = false
 local finished = {}
 
 
@@ -56,12 +55,12 @@ local function OnEvent(frame, event, ...)
 		for i=1,20,1 do	finished[i] = false end
 		getList()
 		PopulateLines()
-		up = true
 	elseif (event == "CURRENCY_DISPLAY_UPDATE") then
-		if (up == true) then
 			getList()
 			PopulateLines()
-		end
+	elseif (event == "CHAT_MSG_CURRENCY") then
+			getList()
+			PopulateLines()
 	end
 end
 
@@ -77,6 +76,7 @@ UIMain:SetMovable(true)
 UIMain.enableMouse="true"
 UIMain:SetScript("OnEvent", OnEvent)
 UIMain:RegisterEvent("PLAYER_LOGIN")
+UIMain:RegisterEvent("CHAT_MSG_CURRENCY")
 UIMain:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
 UIMain:SetSize(300, 200);
 UIMain:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -150, 150);
@@ -122,7 +122,7 @@ function (self)
 	end
 end)
 UIMain.move = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.move:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 90, 0)
+UIMain.move:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 95, 0)
 UIMain.move:SetSize(17,17)
 UIMain.move:SetText("^")
 UIMain.move:SetScript("OnMouseDown",
