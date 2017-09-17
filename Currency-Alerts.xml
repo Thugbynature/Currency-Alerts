@@ -1,5 +1,0 @@
-local baseFrame = CreateFrame("Frame");
-
-local texture = baseFrame:CreateTexture(nil, "BACKGROUND");
-
-local fontString = baseFrame:CreateFontString(nil, "BACKGROUND");
