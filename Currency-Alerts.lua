@@ -3,6 +3,8 @@
 -- frame template cool looking
 -- quest partial compleate alert (aka when i kill 10/10 5/6 10 would alert on finish)
 -- weekly seals warning
+-- scroll preventing clikc on edit
+-- virtical scaling
 
 --SAVED VARIABLES
 CASAVElist = {}
@@ -25,15 +27,14 @@ local save
 local PopulateLines
 local created = {}
 local finished = {}
+local load=false;
 
 local function init()
-	if (count == nil) then
-		list = CASAVElist
-		count = CASAVEcount
-		created = CASAVEcreated
-		list4 = CASAVElist4
-		finished = CASAVEfinished
-	end
+	list = CASAVElist
+	count = CASAVEcount
+	created = CASAVEcreated
+	list4 = CASAVElist4
+	finished = CASAVEfinished
 	if (count == nil) then
 		list[1] = "veiled argunite";
 		list[2] = "seal of broken fate";
@@ -47,21 +48,23 @@ local function init()
 		list[10] = "coins of air";
 		count = 10;
 		for i=1,20,1 do	list4[i] = 0 end
-		for i=1,20,1 do	created[i] = false end
-		for i=1,20,1 do	finished[i] = false end
 		save()
 	end
+	for i=1,20,1 do	created[i] = false end
+	for i=1,20,1 do	finished[i] = false end
 end
 
 local function OnEvent(frame, event, ...)
 	if (event == "PLAYER_LOGIN") then
 		init()
+		load = true;
 		getList()
 		PopulateLines()
 	elseif (event == "CURRENCY_DISPLAY_UPDATE") then
-		init()
-		getList()
-		PopulateLines()
+		if load == true then
+			getList()
+			PopulateLines()
+		end
 	end
 end
 
@@ -364,6 +367,7 @@ function PopulateLines()
 				UIMain.goal[i]:SetMaxLetters(5)
 				UIMain.goal[i]:SetAutoFocus(false)
 				UIMain.goal[i]:SetPoint("TOPLEFT", content, "TOPLEFT", 200, 20+(-i*20));
+				UIMain.goal[i]:SetText(tostring(list4[i]))
 				UIMain.goal[i]:SetTextColor(1,1,1,.3)
 				UIMain.goal[i]:SetJustifyH("RIGHT")
 				UIMain.goal[i]:SetScript("OnEditFocusGained",
@@ -400,7 +404,6 @@ function PopulateLines()
 					end
 				end)
 				created[i] = true
-				UIMain.goal[i]:SetText(tostring(list4[i]))
 			else
 				UIMain.icon[i]:SetTexture(list3[i])
 				UIMain.line[i]:SetText("|cff00ffff" .. list[i])
