@@ -1,7 +1,7 @@
 ## Interface: 70300
 ## Title: Currency Alerts
-## Version: v0.1.7
-## Notes: Keeps track of chosen currencies. v0.1.7
+## Version: v0.1.8
+## Notes: Keeps track of chosen currencies, with alerts. v0.1.8
 ## Author: Souless
 ## DefaultState: enabled
 ## SavedVariablesPerCharacter: CASAVElist, CASAVElist4, CASAVEcount, CASAVEcreated, CASAVEfinished

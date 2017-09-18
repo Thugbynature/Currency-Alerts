@@ -26,41 +26,42 @@ local PopulateLines
 local created = {}
 local finished = {}
 
-
-
-local function OnEvent(frame, event, ...)
-	if (event == "PLAYER_LOGIN") then
+local function init()
+	if (count == nil) then
 		list = CASAVElist
 		count = CASAVEcount
 		created = CASAVEcreated
 		list4 = CASAVElist4
 		finished = CASAVEfinished
-		if (count == nil) then
-			list[1] = "veiled argunite";
-			list[2] = "seal of broken fate";
-			list[3] = "order resources";
-			list[4] = "nethershard";
-			list[5] = "legionfall war supplies"
-			list[6] = "curious coin";
-			list[7] = "ancient mana";
-			list[8] = "darkmoon prize ticket";
-			list[9] = "brawler's gold";
-			list[10] = "coins of air";
-			count = 10;
-			for i=1,20,1 do	created[i] = false end
-			for i=1,20,1 do	list4[i] = 0 end
-			save()
-		end
-		for i=1,20,1 do	created[i] = false end
-		for i=1,20,1 do	finished[i] = false end
+	end
+	if (count == nil) then
+		list[1] = "veiled argunite";
+		list[2] = "seal of broken fate";
+		list[3] = "order resources";
+		list[4] = "nethershard";
+		list[5] = "legionfall war supplies"
+		list[6] = "curious coin";
+		list[7] = "ancient mana";
+		list[8] = "darkmoon prize ticket";
+		list[9] = "brawler's gold";
+		list[10] = "coins of air";
+		count = 10;
+		for i=1,20,1 do	list4[i] = 0 end
+		save()
+	end
+	for i=1,20,1 do	created[i] = false end
+	for i=1,20,1 do	finished[i] = false end
+end
+
+local function OnEvent(frame, event, ...)
+	if (event == "PLAYER_LOGIN") then
+		init()
 		getList()
 		PopulateLines()
 	elseif (event == "CURRENCY_DISPLAY_UPDATE") then
-			getList()
-			PopulateLines()
-	elseif (event == "CHAT_MSG_CURRENCY") then
-			getList()
-			PopulateLines()
+		init()
+		getList()
+		PopulateLines()
 	end
 end
 
@@ -349,12 +350,12 @@ function PopulateLines()
 				-- Name
 				UIMain.line[i] = content:CreateFontString(nil, "ARTWORK");
 				UIMain.line[i]:SetFontObject("GameFontHighlight");
-				UIMain.line[i]:SetPoint("TOPLEFT", content, "TOPLEFT", 60, 15+(-i*20));
+				UIMain.line[i]:SetPoint("TOPLEFT", content, "TOPLEFT", 55, 15+(-i*20));
 				UIMain.line[i]:SetText("|cff00ffff" .. list[i])
 				-- Amount
 				UIMain.amount[i] = content:CreateFontString(nil, "ARTWORK");
 				UIMain.amount[i]:SetFontObject("GameFontHighlight");
-				UIMain.amount[i]:SetPoint("TOPLEFT", content, "TOPLEFT", 25, 15+(-i*20));
+				UIMain.amount[i]:SetPoint("TOPLEFT", content, "TOPLEFT", 22, 15+(-i*20));
 				UIMain.amount[i]:SetText(list2[i])
 				-- Goal
 				UIMain.goal[i] = CreateFrame("EditBox", "CAmain", content, "InputBoxTemplate");
@@ -418,13 +419,10 @@ function PopulateLines()
 				UIMain.amount[i]:SetShown(false)
 				UIMain.goal[i]:SetShown(false)
 				UIMain.remove[i]:SetShown(false)
-				
-			end		
+				UIMain.goal[i]:SetText(tostring(list4[i]))
+			end
 		end
-		if (list4[i] ~= nil) then
-			UIMain.goal[i]:SetText(tostring(list4[i]))
-		end
-		if (tonumber(list4[i]) ~= 0)then
+		if (list4[i] ~= 0)then
 			if(list4[i] ~= nil) then
 				if (list4[i] ~= "")then
 					if (list2[i] >= tonumber(list4[i])) then
