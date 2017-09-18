@@ -47,10 +47,10 @@ local function init()
 		list[10] = "coins of air";
 		count = 10;
 		for i=1,20,1 do	list4[i] = 0 end
+		for i=1,20,1 do	created[i] = false end
+		for i=1,20,1 do	finished[i] = false end
 		save()
 	end
-	for i=1,20,1 do	created[i] = false end
-	for i=1,20,1 do	finished[i] = false end
 end
 
 local function OnEvent(frame, event, ...)
@@ -363,7 +363,7 @@ function PopulateLines()
 				UIMain.goal[i]:SetNumeric(true)
 				UIMain.goal[i]:SetMaxLetters(5)
 				UIMain.goal[i]:SetAutoFocus(false)
-				UIMain.goal[i]:SetPoint("TOPLEFT", content, "TOPLEFT", 205, 20+(-i*20));
+				UIMain.goal[i]:SetPoint("TOPLEFT", content, "TOPLEFT", 200, 20+(-i*20));
 				UIMain.goal[i]:SetTextColor(1,1,1,.3)
 				UIMain.goal[i]:SetJustifyH("RIGHT")
 				UIMain.goal[i]:SetScript("OnEditFocusGained",
@@ -400,6 +400,7 @@ function PopulateLines()
 					end
 				end)
 				created[i] = true
+				UIMain.goal[i]:SetText(tostring(list4[i]))
 			else
 				UIMain.icon[i]:SetTexture(list3[i])
 				UIMain.line[i]:SetText("|cff00ffff" .. list[i])
