@@ -4,7 +4,10 @@
 -- quest partial compleate alert (aka when i kill 10/10 5/6 10 would alert on finish)
 -- weekly seals warning
 -- scroll preventing clikc on edit
--- virtical scaling
+
+-- custom scroll system, resize snaps to 20s, add up and down arrows, snap to max size being count x20
+-- up and downs arrows change the start point for i in for loop, min of count - i = 3 
+-- so you can shrink down to 3 and then click to jump through them, or expand to a max of your list size
 
 --SAVED VARIABLES
 CASAVElist = {}
@@ -19,7 +22,7 @@ local list3 = {}; --icon array
 local list4 = {}; --goal array
 local count
 local edit = false
-local length = 240
+local length = 150
 local delete
 local getList
 local getID
@@ -27,7 +30,7 @@ local save
 local PopulateLines
 local created = {}
 local finished = {}
-local load=false;
+local load=false
 
 local function init()
 	list = CASAVElist
@@ -83,6 +86,9 @@ UIMain:RegisterEvent("PLAYER_LOGIN")
 UIMain:RegisterEvent("CHAT_MSG_CURRENCY")
 UIMain:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
 UIMain:SetSize(300, 200);
+UIMain:SetMinResize(300,100)
+UIMain:SetMaxResize(300,400)
+UIMain:SetResizable(true)
 UIMain:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -150, 150);
 UIMain.title = UIMain:CreateFontString(nil, "ARTWORK");
 UIMain.title:SetFontObject("GameFontHighlight");
@@ -113,6 +119,7 @@ function (self)
 		edit = false;
 	end
 end)
+--Add
 UIMain.add = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
 UIMain.add:SetPoint("RIGHT", UIMain.TitleBg, "RIGHT", -70, 0)
 UIMain.add:SetSize(17,17)
@@ -125,6 +132,7 @@ function (self)
 		UIMain.addbox:SetShown(true)
 	end
 end)
+--Move
 UIMain.move = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
 UIMain.move:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 95, 0)
 UIMain.move:SetSize(17,17)
@@ -139,6 +147,22 @@ UIMain.move:SetScript("OnMouseUp",
 function (self, button)
 	if (button == "LeftButton")then
 		self:GetParent():StopMovingOrSizing() 
+	end
+end)
+--Resize
+UIMain.size = CreateFrame("Button", nil, UIMain, "")
+UIMain.size:SetPoint("Bottom", UIMain, "Bottom")
+UIMain.size:SetSize(300,10)
+UIMain.size:SetScript("OnMouseDown",
+function (self, button)
+	if (button == "LeftButton")then
+		self:GetParent():StartSizing()
+	end
+end)
+UIMain.size:SetScript("OnMouseUp",
+function (self, button)
+	if (button == "LeftButton")then
+		self:GetParent():StopMovingOrSizing()
 	end
 end)
 --ScrollFrame
@@ -168,7 +192,7 @@ scrollbg:SetTexture(0, 0, 0, 0.4)
 UIMain.scrollbar = scrollbar
 --ContentFrame
 local content = CreateFrame("Frame", nil) 
-content:SetSize(175, 500)
+content:SetSize(175, 400)
 scrollframe.content = content
 UIMain.scrollframe:SetScrollChild(content)
 --ConfirmRemoveFrame
@@ -250,7 +274,7 @@ end)
 UIMain.addbox:SetScript("OnEnterPressed",
 	function (self) 
 	if self:GetText() ~= "" then
-		if(count <= 20) then
+		if(count < 20) then
 				if(getID(self:GetText()) ~= nil) then
 						local test = false
 						for i=1, count, 1 do
@@ -303,12 +327,13 @@ local IDlist = {
 	["dingy iron coins"] = 980,
 	["echoes of battle"] = 1356,
 	["echoes of domination"] = 1357,
-	["epicureans award"] = 81,
 	["felessence"] = 1355,
 	["garrison resources"] = 824,
 	["ironpaw token"] = 402,
 	["writhing essence"] = 1501,
-	["lingering soul fragment"] = 1314
+	["lingering soul fragment"] = 1314,
+	["timewarped badge"] = 1166,
+	["sightless eye"] = 1149
 };
 
 function getID(name)
@@ -326,7 +351,7 @@ function getList()
 		local ins1
 		local ins2
 		local ins3
-
+		if getID(list[i]) == nil then return nil end
 		ins1,ins2,ins3 = GetCurrencyInfo(getID(list[i]))
 		ins[1] = ins1
 		ins[2] = ins2
