@@ -27,7 +27,8 @@ local load=false
 local count
 local edit = false
 local delete
-local scroll
+local scroll = 0
+local value = 10
 local getList --function declaration
 local getID --""
 local save --""
@@ -138,26 +139,32 @@ function (self)
 		UIMain.addbox:SetShown(true)
 	end
 end)
---Scroll Uown
+--Scroll Up
 UIMain.move = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.move:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 95, 0)
-UIMain.move:SetSize(17,17)
+UIMain.move:SetPoint("TOPRIGHT", UIMain, "TOPRIGHT", -20, -30)
+UIMain.move:SetSize(30,30)
 UIMain.move:SetText("^")
 UIMain.move:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
-		
+		if scroll > 0 then scroll = scroll-1 end
+		UIMain.content:SetPoint("TOP", 0, -30 + (scroll*20))
+		PopulateLines()
 	end
 end)
 --Scroll down
 UIMain.move = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.move:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 95, 0)
-UIMain.move:SetSize(17,17)
-UIMain.move:SetText("^")
+UIMain.move:SetPoint("BOTTOMRIGHT", UIMain, "BOTTOMRIGHT", 10, -30)
+UIMain.move:SetSize(30,30)
+UIMain.move:SetText("v")
 UIMain.move:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
-		
+		if (value + scroll +1) <= count then
+			scroll = scroll+1
+			UIMain.content:SetPoint("TOP", 0, -30 + (scroll*20))
+			PopulateLines()
+		end
 	end
 end)
 --Move
@@ -194,15 +201,18 @@ function (self, button)
 		local w
 		local h
 		w, h = UIMain:GetSize()
-		local value = math.floor(h/20)
+		value = math.floor(h/20)
 		if (value > count) then value = count end
 		UiMain.SetSize(w,(value*20))
+		scroll = 0
+		UIMain.content:SetPoint("TOP", 0, -30)
+		PopulateLines()
 	end
 end)
 --ContentFrame
 UIMain.content = CreateFrame("Frame", "CAmain", UIMain, "")
-UIMain.content:SetPoint("TOPLEFT", 10, -30) 
-UIMain.content:SetPoint("BOTTOMRIGHT", -10, 10) 
+UIMain.content:SetPoint("TOP", 0, -30)
+UIMain.content:SetSize(300,400)
 --ConfirmRemoveFrame
 UIMain.confirm = CreateFrame("Frame", "CAmain", UIMain, "BasicFrameTemplateWithInset")
 UIMain.confirm:SetToplevel(true)
@@ -380,78 +390,78 @@ end
 function PopulateLines()
 	for i=1, 20, 1 do
 		if list[i] ~= nil then
-			if created[i] == false then
-				-- Icon
-				UIMain.icon[i] = UIMain.content:CreateTexture(nil , "ARTWORK")
-				UIMain.icon[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 0, 20+(-i*20)) 
-				UIMain.icon[i]:SetTexture(list3[i])
-				UIMain.icon[i]:SetSize(20, 20)
-				-- Name
-				UIMain.line[i] = UIMain.content:CreateFontString(nil, "ARTWORK");
-				UIMain.line[i]:SetFontObject("GameFontHighlight");
-				UIMain.line[i]:SetPoint("TOPLEFT", content, "TOPLEFT", 55, 15+(-i*20));
-				UIMain.line[i]:SetText("|cff00ffff" .. list[i])
-				-- Amount
-				UIMain.amount[i] = UIMain.content:CreateFontString(nil, "ARTWORK");
-				UIMain.amount[i]:SetFontObject("GameFontHighlight");
-				UIMain.amount[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 22, 15+(-i*20));
-				UIMain.amount[i]:SetText(list2[i])
-				-- Goal
-				UIMain.goal[i] = CreateFrame("EditBox", "CAmain", UIMain.content, "InputBoxTemplate");
-				UIMain.goal[i]:SetSize(40,20)
-				UIMain.goal[i]:SetNumeric(true)
-				UIMain.goal[i]:SetMaxLetters(5)
-				UIMain.goal[i]:SetAutoFocus(false)
-				UIMain.goal[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 200, 20+(-i*20));
-				UIMain.goal[i]:SetText(tostring(list4[i]))
-				UIMain.goal[i]:SetTextColor(1,1,1,.3)
-				UIMain.goal[i]:SetJustifyH("RIGHT")
-				UIMain.goal[i]:SetScript("OnEditFocusGained",
-				function (self) 
-					if self:GetText() == "0" then
-						self:SetText("")
-					end
-				end)
-				UIMain.goal[i]:SetScript("OnEditFocusLost",
-				function (self) 
-					if self:GetText() == "" then
-						self:SetText("0")
-					end
-				end)
-				UIMain.goal[i]:SetScript("OnEnterPressed",
-				function (self) 
-					if self:GetText() ~= "" then
-						list4[i] = tonumber(self:GetText())
-						self:ClearFocus()
-						save()
-					end
-				end)
-				UIMain.goal[i]:Disable()
-				-- Remove
-				UIMain.remove[i] = CreateFrame("Button", nil, UIMain.content, "GameMenuButtonTemplate")
-				UIMain.remove[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 245, 20+(-i*20));
-				UIMain.remove[i]:SetSize(20,20)
-				UIMain.remove[i]:SetText("-")
-				UIMain.remove[i]:SetScript("OnClick", 
-				function (self)
-					if (edit == false) then
-						delete = i;
-						UIMain.confirm:SetShown(true)
-					end
-				end)
-				created[i] = true
-			else
-				UIMain.icon[i]:SetTexture(list3[i])
-				UIMain.line[i]:SetText("|cff00ffff" .. list[i])
-				UIMain.amount[i]:SetText(list2[i])
-				UIMain.goal[i]:SetText(tostring(list4[i]))
+				if created[i] == false then
+					-- Icon
+					UIMain.icon[i] = UIMain.content:CreateTexture(nil , "ARTWORK")
+					UIMain.icon[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 0, 20+(-i*20)) 
+					UIMain.icon[i]:SetTexture(list3[i])
+					UIMain.icon[i]:SetSize(20, 20)
+					-- Name
+					UIMain.line[i] = UIMain.content:CreateFontString(nil, "ARTWORK");
+					UIMain.line[i]:SetFontObject("GameFontHighlight");
+					UIMain.line[i]:SetPoint("TOPLEFT", content, "TOPLEFT", 55, 15+(-i*20));
+					UIMain.line[i]:SetText("|cff00ffff" .. list[i])
+					-- Amount
+					UIMain.amount[i] = UIMain.content:CreateFontString(nil, "ARTWORK");
+					UIMain.amount[i]:SetFontObject("GameFontHighlight");
+					UIMain.amount[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 22, 15+(-i*20));
+					UIMain.amount[i]:SetText(list2[i])
+					-- Goal
+					UIMain.goal[i] = CreateFrame("EditBox", "CAmain", UIMain.content, "InputBoxTemplate");
+					UIMain.goal[i]:SetSize(40,20)
+					UIMain.goal[i]:SetNumeric(true)
+					UIMain.goal[i]:SetMaxLetters(5)
+					UIMain.goal[i]:SetAutoFocus(false)
+					UIMain.goal[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 200, 20+(-i*20));
+					UIMain.goal[i]:SetText(tostring(list4[i]))
+					UIMain.goal[i]:SetTextColor(1,1,1,.3)
+					UIMain.goal[i]:SetJustifyH("RIGHT")
+					UIMain.goal[i]:SetScript("OnEditFocusGained",
+					function (self) 
+						if self:GetText() == "0" then
+							self:SetText("")
+						end
+					end)
+					UIMain.goal[i]:SetScript("OnEditFocusLost",
+					function (self) 
+						if self:GetText() == "" then
+							self:SetText("0")
+						end
+					end)
+					UIMain.goal[i]:SetScript("OnEnterPressed",
+					function (self) 
+						if self:GetText() ~= "" then
+							list4[i] = tonumber(self:GetText())
+							self:ClearFocus()
+							save()
+						end
+					end)
+					UIMain.goal[i]:Disable()
+					-- Remove
+					UIMain.remove[i] = CreateFrame("Button", nil, UIMain.content, "GameMenuButtonTemplate")
+					UIMain.remove[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 245, 20+(-i*20));
+					UIMain.remove[i]:SetSize(20,20)
+					UIMain.remove[i]:SetText("-")
+					UIMain.remove[i]:SetScript("OnClick", 
+					function (self)
+						if (edit == false) then
+							delete = i;
+							UIMain.confirm:SetShown(true)
+						end
+					end)
+					created[i] = true
+				else
+					UIMain.icon[i]:SetTexture(list3[i])
+					UIMain.line[i]:SetText("|cff00ffff" .. list[i])
+					UIMain.amount[i]:SetText(list2[i])
+					UIMain.goal[i]:SetText(tostring(list4[i]))
 
-				if UIMain.icon[i]:IsShown() == false then UIMain.icon[i]:SetShown(true) end
-				if UIMain.amount[i]:IsShown() == false then UIMain.amount[i]:SetShown(true) end
-				if UIMain.line[i]:IsShown() == false then UIMain.line[i]:SetShown(true) end
-				if UIMain.goal[i]:IsShown() == false then UIMain.goal[i]:SetShown(true) end
-				if UIMain.remove[i]:IsShown() == false then UIMain.remove[i]:SetShown(true) end
-			end
+					if UIMain.icon[i]:IsShown() == false then UIMain.icon[i]:SetShown(true) end
+					if UIMain.amount[i]:IsShown() == false then UIMain.amount[i]:SetShown(true) end
+					if UIMain.line[i]:IsShown() == false then UIMain.line[i]:SetShown(true) end
+					if UIMain.goal[i]:IsShown() == false then UIMain.goal[i]:SetShown(true) end
+					if UIMain.remove[i]:IsShown() == false then UIMain.remove[i]:SetShown(true) end
+				end
 		else
 			if created[i] == true then
 				UIMain.icon[i]:SetShown(false)
@@ -459,7 +469,26 @@ function PopulateLines()
 				UIMain.amount[i]:SetShown(false)
 				UIMain.goal[i]:SetShown(false)
 				UIMain.remove[i]:SetShown(false)
-				UIMain.goal[i]:SetText(tostring(list4[i]))
+			end
+		end
+		if scroll > 0 then
+			if i <= scroll then
+				if created[i] == true then
+					UIMain.icon[i]:SetShown(false)
+					UIMain.line[i]:SetShown(false)
+					UIMain.amount[i]:SetShown(false)
+					UIMain.goal[i]:SetShown(false)
+					UIMain.remove[i]:SetShown(false)
+				end
+			end
+		end
+		if i > (scroll+value) then
+			if created[i] == true then
+					UIMain.icon[i]:SetShown(false)
+					UIMain.line[i]:SetShown(false)
+					UIMain.amount[i]:SetShown(false)
+					UIMain.goal[i]:SetShown(false)
+					UIMain.remove[i]:SetShown(false)
 			end
 		end
 		if (list4[i] ~= 0)then
