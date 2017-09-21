@@ -21,17 +21,17 @@ local list = {}; --name array
 local list2 = {}; --amount array
 local list3 = {}; --icon array
 local list4 = {}; --goal array
-local count
-local edit = false
-local length = 150
-local delete
-local getList
-local getID
-local save
-local PopulateLines
 local created = {}
 local finished = {}
 local load=false
+local count
+local edit = false
+local delete
+local scroll
+local getList --function declaration
+local getID --""
+local save --""
+local PopulateLines --""
 
 --init on each reload/login
 local function init()
@@ -81,6 +81,7 @@ local UIMain = CreateFrame("Frame", "CAmain", UIParent, "BasicFrameTemplateWithI
 UIMain.goal = {}
 UIMain.icon = {}
 UIMain.line = {}
+UIMain.content = {}
 UIMain.amount = {}
 UIMain.remove = {}
 UIMain:SetMovable(true)
@@ -137,6 +138,28 @@ function (self)
 		UIMain.addbox:SetShown(true)
 	end
 end)
+--Scroll Uown
+UIMain.move = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
+UIMain.move:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 95, 0)
+UIMain.move:SetSize(17,17)
+UIMain.move:SetText("^")
+UIMain.move:SetScript("OnMouseDown",
+function (self, button)
+	if (button == "LeftButton")then
+		
+	end
+end)
+--Scroll down
+UIMain.move = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
+UIMain.move:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 95, 0)
+UIMain.move:SetSize(17,17)
+UIMain.move:SetText("^")
+UIMain.move:SetScript("OnMouseDown",
+function (self, button)
+	if (button == "LeftButton")then
+		
+	end
+end)
 --Move
 UIMain.move = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
 UIMain.move:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 95, 0)
@@ -168,38 +191,18 @@ UIMain.size:SetScript("OnMouseUp",
 function (self, button)
 	if (button == "LeftButton")then
 		self:GetParent():StopMovingOrSizing()
+		local w
+		local h
+		w, h = UIMain:GetSize()
+		local value = math.floor(h/20)
+		if (value > count) then value = count end
+		UiMain.SetSize(w,(value*20))
 	end
 end)
---ScrollFrame
-scrollframe = CreateFrame("ScrollFrame", nil, UIMain) 
-scrollframe:SetPoint("TOPLEFT", 10, -30) 
-scrollframe:SetPoint("BOTTOMRIGHT", -10, 10) 
-local texture = scrollframe:CreateTexture() 
-texture:SetAllPoints() 
-texture:SetTexture(.5,.5,.5,1) 
-UIMain.scrollframe = scrollframe
---ScrollBar
-scrollbar = CreateFrame("Slider", nil, UIMain.scrollframe, "UIPanelScrollBarTemplate") 
-scrollbar:SetPoint("TOPLEFT", scrollframe, "TOPRIGHT", -15, -16) 
-scrollbar:SetPoint("BOTTOMLEFT", scrollframe, "BOTTOMRIGHT", -15, 16) 
-scrollbar:SetMinMaxValues(1, length)
-scrollbar:SetValueStep(20) 
-scrollbar.scrollStep = 20
-scrollbar:SetValue(0) 
-scrollbar:SetWidth(16) 
-scrollbar:SetScript("OnValueChanged", 
-function (self, value) 
-self:GetParent():SetVerticalScroll(value) 
-end) 
-local scrollbg = scrollbar:CreateTexture(nil, "BACKGROUND") 
-scrollbg:SetAllPoints(scrollbar) 
-scrollbg:SetTexture(0, 0, 0, 0.4) 
-UIMain.scrollbar = scrollbar
 --ContentFrame
-local content = CreateFrame("Frame", nil) 
-content:SetSize(175, 400)
-scrollframe.content = content
-UIMain.scrollframe:SetScrollChild(content)
+UIMain.content = CreateFrame("Frame", "CAmain", UIMain, "")
+UIMain.content:SetPoint("TOPLEFT", 10, -30) 
+UIMain.content:SetPoint("BOTTOMRIGHT", -10, 10) 
 --ConfirmRemoveFrame
 UIMain.confirm = CreateFrame("Frame", "CAmain", UIMain, "BasicFrameTemplateWithInset")
 UIMain.confirm:SetToplevel(true)
@@ -379,27 +382,27 @@ function PopulateLines()
 		if list[i] ~= nil then
 			if created[i] == false then
 				-- Icon
-				UIMain.icon[i] = content:CreateTexture(nil , "ARTWORK")
-				UIMain.icon[i]:SetPoint("TOPLEFT", content, "TOPLEFT", 0, 20+(-i*20)) 
+				UIMain.icon[i] = UIMain.content:CreateTexture(nil , "ARTWORK")
+				UIMain.icon[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 0, 20+(-i*20)) 
 				UIMain.icon[i]:SetTexture(list3[i])
 				UIMain.icon[i]:SetSize(20, 20)
 				-- Name
-				UIMain.line[i] = content:CreateFontString(nil, "ARTWORK");
+				UIMain.line[i] = UIMain.content:CreateFontString(nil, "ARTWORK");
 				UIMain.line[i]:SetFontObject("GameFontHighlight");
 				UIMain.line[i]:SetPoint("TOPLEFT", content, "TOPLEFT", 55, 15+(-i*20));
 				UIMain.line[i]:SetText("|cff00ffff" .. list[i])
 				-- Amount
-				UIMain.amount[i] = content:CreateFontString(nil, "ARTWORK");
+				UIMain.amount[i] = UIMain.content:CreateFontString(nil, "ARTWORK");
 				UIMain.amount[i]:SetFontObject("GameFontHighlight");
-				UIMain.amount[i]:SetPoint("TOPLEFT", content, "TOPLEFT", 22, 15+(-i*20));
+				UIMain.amount[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 22, 15+(-i*20));
 				UIMain.amount[i]:SetText(list2[i])
 				-- Goal
-				UIMain.goal[i] = CreateFrame("EditBox", "CAmain", content, "InputBoxTemplate");
+				UIMain.goal[i] = CreateFrame("EditBox", "CAmain", UIMain.content, "InputBoxTemplate");
 				UIMain.goal[i]:SetSize(40,20)
 				UIMain.goal[i]:SetNumeric(true)
 				UIMain.goal[i]:SetMaxLetters(5)
 				UIMain.goal[i]:SetAutoFocus(false)
-				UIMain.goal[i]:SetPoint("TOPLEFT", content, "TOPLEFT", 200, 20+(-i*20));
+				UIMain.goal[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 200, 20+(-i*20));
 				UIMain.goal[i]:SetText(tostring(list4[i]))
 				UIMain.goal[i]:SetTextColor(1,1,1,.3)
 				UIMain.goal[i]:SetJustifyH("RIGHT")
@@ -425,8 +428,8 @@ function PopulateLines()
 				end)
 				UIMain.goal[i]:Disable()
 				-- Remove
-				UIMain.remove[i] = CreateFrame("Button", nil, content, "GameMenuButtonTemplate")
-				UIMain.remove[i]:SetPoint("TOPLEFT", content, "TOPLEFT", 245, 20+(-i*20));
+				UIMain.remove[i] = CreateFrame("Button", nil, UIMain.content, "GameMenuButtonTemplate")
+				UIMain.remove[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 245, 20+(-i*20));
 				UIMain.remove[i]:SetSize(20,20)
 				UIMain.remove[i]:SetText("-")
 				UIMain.remove[i]:SetScript("OnClick", 
