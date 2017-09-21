@@ -16,6 +16,7 @@ CASAVEcount = count
 CASAVEcreated = {}
 CASAVEfinished = {}
 
+--Local Variables
 local list = {}; --name array
 local list2 = {}; --amount array
 local list3 = {}; --icon array
@@ -32,6 +33,7 @@ local created = {}
 local finished = {}
 local load=false
 
+--init on each reload/login
 local function init()
 	list = CASAVElist
 	count = CASAVEcount
@@ -51,12 +53,14 @@ local function init()
 		list[10] = "coins of air";
 		count = 10;
 		for i=1,20,1 do	list4[i] = 0 end
+		UIMain:SetShown(false)
 		save()
 	end
 	for i=1,20,1 do	created[i] = false end
 	for i=1,20,1 do	finished[i] = false end
 end
 
+-- Event Handlers
 local function OnEvent(frame, event, ...)
 	if (event == "PLAYER_LOGIN") then
 		init()
@@ -95,6 +99,7 @@ UIMain.title:SetFontObject("GameFontHighlight");
 UIMain.title:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 5, 0);
 UIMain.title:SetText("|cffffff00Currency Alerts");
 --Buttons
+--Edit
 UIMain.edit = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
 UIMain.edit:SetPoint("RIGHT", UIMain.TitleBg, "RIGHT", 0, 0)
 UIMain.edit:SetSize(75,17)
@@ -307,6 +312,7 @@ UIMain.addbox:SetScript("OnEnterPressed",
 end)
 --
 
+-- ID registry
 local IDlist = {
 	["ancient mana"] = 1155,
 	["coins of air"] = 1416,
@@ -336,6 +342,7 @@ local IDlist = {
 	["sightless eye"] = 1149
 };
 
+-- ID from name
 function getID(name)
 if (string.sub(name, 1, 1) == "[") then
 name = string.sub(name, 2, string.len(name)-1)
@@ -345,6 +352,7 @@ local id = IDlist[name];
 return id;
 end
 
+-- Get currency information from wow
 function getList()
 	for i=1, count, 1 do
 		local ins = {}
@@ -365,7 +373,7 @@ function getList()
 end
 
 
-
+-- Creates frames and displayes infromation from get list
 function PopulateLines()
 	for i=1, 20, 1 do
 		if list[i] ~= nil then
@@ -471,7 +479,7 @@ function PopulateLines()
 	save()
 end
 
-
+-- slash commands
 SLASH_CA1 = "/ca"
 SlashCmdList["CA"] = function()
 	if (UIMain:IsShown()) then
@@ -481,6 +489,7 @@ SlashCmdList["CA"] = function()
 	end
 end
 
+-- save global VARIABLES
 function save() 
 	CASAVElist = list
 	CASAVEcount = count
@@ -488,5 +497,3 @@ function save()
 	CASAVElist4 = list4
 	CASAVEfinished = finished
 end
-print(UIMain.edit:GetBackdropColor())
-UIMain:SetShown(false)
