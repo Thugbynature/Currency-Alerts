@@ -15,6 +15,7 @@ CASAVElist4 = {}
 CASAVEcount = count
 CASAVEcreated = {}
 CASAVEfinished = {}
+CASAVEvalue = {}
 
 --Local Variables
 local list = {}; --name array
@@ -28,7 +29,7 @@ local count
 local edit = false
 local delete
 local scroll = 0
-local value = 10
+local value
 local getList --function declaration
 local getID --""
 local save --""
@@ -41,6 +42,7 @@ local function init()
 	created = CASAVEcreated
 	list4 = CASAVElist4
 	finished = CASAVEfinished
+	value = CASAVEvalue
 	if (count == nil) then
 		list[1] = "veiled argunite";
 		list[2] = "seal of broken fate";
@@ -53,6 +55,7 @@ local function init()
 		list[9] = "brawler's gold";
 		list[10] = "coins of air";
 		count = 10;
+		value = 10;
 		for i=1,20,1 do	list4[i] = 0 end
 		UIMain:SetShown(false)
 		save()
@@ -522,10 +525,11 @@ SlashCmdList["CA"] = function()
 end
 
 -- save global VARIABLES
-function save() 
+function save()
 	CASAVElist = list
 	CASAVEcount = count
 	CASAVEcreated = created
 	CASAVElist4 = list4
 	CASAVEfinished = finished
+	CASAVEvalue = value
 end
