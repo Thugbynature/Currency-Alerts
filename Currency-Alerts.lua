@@ -33,6 +33,8 @@ local delete
 local scroll = 0
 local value
 local shown = false
+local lock
+local editl
 local getList --function declaration
 local getID --""
 local save --""
@@ -49,6 +51,8 @@ local function init()
 	count = CASAVEcount[1]
 	value = CASAVEcount[2]
 	shown = CASAVEcount[3]
+	lock = CASAVEcount[4]
+	editl = CASAVEcount[5]
 	created = CASAVEcreated
 	list4 = CASAVElist4
 	finished = CASAVEfinished
@@ -74,7 +78,10 @@ local function init()
 		save()
 	end
 	--
-
+	
+	UIMain.settings:SetShown(false)
+	UIMain.content:SetShown(true)
+	if not UIMain.cblock:GetChecked() then UIMain.move:SetShown(true) end
 	for i=1,20,1 do	created[i] = false end
 	scroll = 0
 	UIMain:SetSize(300, (value * 20)+40)
@@ -105,6 +112,7 @@ UIMain.line = {}
 UIMain.content = {}
 UIMain.amount = {}
 UIMain.remove = {}
+UIMain.resetcf = {}
 UIMain:SetMovable(true)
 UIMain.enableMouse="true"
 UIMain:SetScript("OnEvent", OnEvent)
@@ -158,14 +166,16 @@ function (self, button)
 	if (button == "LeftButton")then
 		if (UIMain.addbox:IsShown()) then
 			UIMain.addbox:SetShown(false)
+			UIMain.move:SetShown(true)
 		else
 			UIMain.addbox:SetShown(true)
+			UIMain.move:SetShown(false)
 		end
 	end
 end)
 --Settingsb
 UIMain.settingsb = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.settingsb:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 75, 0)
+UIMain.settingsb:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 95, 0)
 UIMain.settingsb:SetSize(17,17)
 UIMain.settingsb:SetText("*")
 UIMain.settingsb:SetScript("OnClick",
@@ -174,12 +184,14 @@ function (self, button)
 		if (UIMain.settings:IsShown()) then
 			UIMain.settings:SetShown(false)
 			UIMain.content:SetShown(true)
+			if not lock then UIMain.size:SetShown(true) end
 			PopulateLines()
 		else
 			UIMain.settings:SetShown(true)
 			UIMain.content:SetShown(false)
 			UIMain.down:SetShown(false)
 			UIMain.up:SetShown(false)
+			UIMain.size:SetShown(false)
 		end
 	end
 end)
@@ -213,7 +225,7 @@ function (self, button)
 end)
 --Move
 UIMain.move = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.move:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 93, 0)
+UIMain.move:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 110, 0)
 UIMain.move:SetSize(17,17)
 UIMain.move:SetText("^")
 UIMain.move:SetScript("OnMouseDown",
@@ -261,50 +273,52 @@ UIMain.content = CreateFrame("Frame", "CAmain", UIMain, "")
 UIMain.content:SetPoint("TOP", 0, -30)
 UIMain.content:SetSize(280,400)
 --Settings
-UIMain.settings = CreateFrame("Frame", "CAmain", UIMain, "BasicFrameTemplateWithInset")
+UIMain.settings = CreateFrame("Frame", "CAmain", UIMain, "")
 UIMain.settings:SetToplevel(true)
-UIMain.settings:SetPoint("TOPLEFT", UIMain, "TOPLEFT", -40,10);
-UIMain.settings:SetPoint("BOTTOMRIGHT", UIMain, "BOTTOMRIGHT", 10,-10);
+UIMain.settings:SetPoint("TOPLEFT", UIMain, "TOPLEFT", 10,-30);
+UIMain.settings:SetPoint("BOTTOMRIGHT", UIMain, "BOTTOMRIGHT", -10, 10);
 UIMain.settings:SetShown(false)
-UIMain.stitle = UIMain.settings:CreateFontString(nil, "OVERLAY");
-UIMain.stitle:SetFontObject("GameFontHighlight");
-UIMain.stitle:SetPoint("LEFT", UIMain.settings.TitleBg, "LEFT", 5, 0);
-UIMain.stitle:SetText("|cffffff00Settings");
 UIMain.cblock =  CreateFrame("CheckButton", "CAmain", UIMain.settings, "UICheckButtonTemplate")
-UIMain.cblock:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, 0)
+UIMain.cblock:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, 3)
 UIMain.cblock:SetSize(20,20)
-_G[UIMain.cblock:GetName() .. "Text"]:SetText("Lock Frame")
 UIMain.cblock:SetChecked(not UIMain.move:IsShown())
+UIMain.cblockt = UIMain.settings:CreateFontString(nil, "ARTWORK");
+UIMain.cblockt:SetFontObject("GameFontHighlight");
+UIMain.cblockt:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 17, 0);
+UIMain.cblockt:SetText("Lock Frame");
 UIMain.cblock:SetScript("PostClick",
 function (self, button, down)
 	if self:GetChecked() then
 		UIMain.move:SetShown(false)
-		UIMain.size:SetShown(false)
+		lock = false
 	else
 		UIMain.move:SetShown(true)
-		UIMain.size:SetShown(true)
+		lock = true
 	end
 end)
 UIMain.cblist =  CreateFrame("CheckButton", "CAmain", UIMain.settings, "UICheckButtonTemplate")
-UIMain.cblist:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, -20)
+UIMain.cblist:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, -17)
 UIMain.cblist:SetSize(20,20)
-_G[UIMain.cblist:GetName() .. "Text"]:SetText("Edit List")
 UIMain.cblist:SetChecked(UIMain.move:IsShown())
+UIMain.cblistt = UIMain.settings:CreateFontString(nil, "ARTWORK");
+UIMain.cblistt:SetFontObject("GameFontHighlight");
+UIMain.cblistt:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 17, -20);
+UIMain.cblistt:SetText("Edit List");
 UIMain.cblist:SetScript("PostClick",
 function (self, button, down)
 	if self:GetChecked() then
 		UIMain.add:SetShown(true)
-		UIMain.remove:SetShown(true)
+		editl = true
 		else
 		UIMain.add:SetShown(false)
-		UIMain.remove:SetShown(false)
 		UIMain.confirm:SetShown(false)
 		UIMain.addbox:SetShown(false)
+		editl = false
 	end
 end)
 UIMain.reset = CreateFrame("Button", nil, UIMain.settings, "GameMenuButtonTemplate")
 UIMain.reset:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, -40)
-UIMain.reset:SetSize(60,25)
+UIMain.reset:SetSize(60,20)
 UIMain.reset:SetText("Reset")
 UIMain.reset:SetScript("OnClick",
 function (self, button)
@@ -316,9 +330,9 @@ function (self, button)
 		end
 	end
 end)
-UIMain.resetcf = CreateFrame("Button", nil, UIMain.confirm, "GameMenuButtonTemplate")
+UIMain.resetcf = CreateFrame("Button", nil, UIMain.settings, "GameMenuButtonTemplate")
 UIMain.resetcf:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 70, -40)
-UIMain.resetcf:SetSize(60,25)
+UIMain.resetcf:SetSize(60,20)
 UIMain.resetcf:SetText("Confirm")
 UIMain.resetcf:SetShown(false)
 UIMain.resetcf:SetScript("OnClick",
@@ -383,10 +397,11 @@ function (self, button)
 end)
 -- Add Editbox
 UIMain.addbox = CreateFrame("EditBox", "CAmain", UIMain, "InputBoxTemplate");
-UIMain.addbox:SetSize(75,17)
+UIMain.addbox:SetSize(65,17)
 UIMain.addbox:SetAutoFocus(false)
-UIMain.addbox:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 127, 0)
-UIMain.addbox:SetText("Enter Name")
+UIMain.addbox:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 117, 0)
+UIMain.addbox:SetJustifyH("RIGHT")
+UIMain.addbox:SetText("Name")
 UIMain.addbox:SetShown(false)
 UIMain.addbox:SetScript("OnEditFocusGained",
 function (self) 
@@ -403,7 +418,7 @@ end)
 UIMain.addbox:SetScript("OnEditFocusLost",
 	function (self) 
 	if self:GetText() == "" then
-		self:SetText("Enter Name")
+		self:SetText("Name")
 	end
 end)
 UIMain.addbox:SetScript("OnEnterPressed",
@@ -443,7 +458,7 @@ end)
 --
 
 -- Scale Set
-local function scaleset()
+function scaleset()
 	local w
 	local h
 	w, h = UIMain:GetSize()
@@ -451,12 +466,7 @@ local function scaleset()
 	value = math.floor(h/20)
 	if (value > count) then value = count end
 	if (value * 20) <60 then value = 3 end
-	local top = UIMain:GetTop()
-	local left = Region:GetLeft()
 	UIMain:SetSize(w, (value * 20)+40)
-	local hw = w/2
-	local hh = ((value * 20)+40)/2
-	UIMain:SetPoint("CENTER", UIParent, "BOTTOMRIGHT", left+hw,  top+hh);
 	scroll = 0
 	UIMain.content:SetPoint("TOP", 0, -30)
 	PopulateLines()
@@ -611,6 +621,13 @@ function PopulateLines()
 				UIMain.remove[i]:SetShown(false)
 			end
 		end
+		if created[i] == true then
+			if UIMain.cblist:GetChecked() then
+				UIMain.remove[i]:SetShown(true)
+			else
+				UIMain.remove[i]:SetShown(false)
+			end
+		end
 		if scroll > 0 then
 			if i <= scroll then
 				if created[i] == true then
@@ -650,23 +667,25 @@ function PopulateLines()
 	end
 	if scroll ~= 0 then UIMain.up:SetShown(true) else UIMain.up:SetShown(false) end
 	if (value+scroll) < count then UIMain.down:SetShown(true) else UIMain.down:SetShown(false) end
+	UIMain.cblock:SetChecked(not lock)
+	UIMain.cblist:SetChecked(editl)
+	if not lock then UIMain.size:SetShown(true) end
 	save()
 end
 
 -- reset
-local function reset()
-	CASAVElist = nil
-	CASAVEcount[1] = nil
-	CASAVEcount[2] = nil
-	CASAVEcreated = nil
-	CASAVElist4 = nil
-	CASAVEfinished = nil
-	CASAVEcount[3] = nil
+function reset()
+	CASAVElist = {}
+	CASAVEcount = {}
+	CASAVEcreated = {}
+	CASAVElist4 = {}
+	CASAVEfinished = {}
+	CASAVEcount[4] = false
+	CASAVEcount[5] = true
 	UIMain.resetcf:SetShown(false)
 	UIMain.settings:SetShown(false)
 	UIMain.move:SetShown(true)
 	UIMain.size:SetShown(true)
-	UIMain.cblock:SetChecked(not UIMain.move:IsShown())
 	UIMain.addbox:SetShown(false)
 	UIMain.confirm:SetShown(false)
 	init()
@@ -687,12 +706,14 @@ SlashCmdList["CA"] = function()
 end
 
 -- save global VARIABLES
-local function save()
+function save()
 	CASAVElist = list
 	CASAVEcount[1] = count
 	CASAVEcount[2] = value
 	CASAVEcreated = created
 	CASAVElist4 = list4
 	CASAVEfinished = finished
-	CASAVEcount[3] = UIMain.icon[i]:IsShown()
+	CASAVEcount[3] = UIMain:IsShown()
+	CASAVEcount[4] = UIMain.cblock:GetChecked()
+	CASAVEcount[5] = UIMain.cblist:GetChecked()
 end
