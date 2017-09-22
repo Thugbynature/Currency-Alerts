@@ -150,7 +150,7 @@ function (self, button)
 end)
 --Add
 UIMain.add = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.add:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 110, 0)
+UIMain.add:SetPoint("RIGHT", UIMain.TitleBg, "RIGHT", -75, 0)
 UIMain.add:SetSize(17,17)
 UIMain.add:SetText("+")
 UIMain.add:SetScript("OnClick",
@@ -160,6 +160,26 @@ function (self, button)
 			UIMain.addbox:SetShown(false)
 		else
 			UIMain.addbox:SetShown(true)
+		end
+	end
+end)
+--Settingsb
+UIMain.settingsb = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
+UIMain.settingsb:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 75, 0)
+UIMain.settingsb:SetSize(17,17)
+UIMain.settingsb:SetText("*")
+UIMain.settingsb:SetScript("OnClick",
+function (self, button)
+	if (button == "LeftButton")then
+		if (UIMain.settings:IsShown()) then
+			UIMain.settings:SetShown(false)
+			UIMain.content:SetShown(true)
+			PopulateLines()
+		else
+			UIMain.settings:SetShown(true)
+			UIMain.content:SetShown(false)
+			UIMain.down:SetShown(false)
+			UIMain.up:SetShown(false)
 		end
 	end
 end)
@@ -208,56 +228,6 @@ function (self, button)
 		self:GetParent():StopMovingOrSizing() 
 	end
 end)
---Settings
-UIMain.settings = CreateFrame("Frame", "CAmain", UIMain, "BasicFrameTemplateWithInset")
-UIMain.settings:SetToplevel(true)
-UIMain.settings:SetSize(100, 80);
-UIMain.settings:SetPoint("CENTER", UIMain, "CENTER", 175, 0);
-UIMain.settings:SetShown(false)
-UIMain.stitle = UIMain.settings:CreateFontString(nil, "OVERLAY");
-UIMain.stitle:SetFontObject("GameFontHighlight");
-UIMain.stitle:SetPoint("LEFT", UIMain.settings.TitleBg, "LEFT", 5, 0);
-UIMain.stitle:SetText("|cffffff00Settings");
-UIMain.cblock =  CreateFrame("CheckButton", "CAmain", UIMain.settings, "UICheckButtonTemplate")
-UIMain.cblock:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 10, -40)
-UIMain.cblock:SetSize(20,20)
-_G[UIMain.cblock:GetName() .. "Text"]:SetText("Lock Frame")
-UIMain.cblock:SetChecked(not UIMain.move:IsShown())
-UIMain.cblock:SetScript("PostClick",
-function (self, button, down)
-	if self:GetChecked() then
-		UIMain.move:SetShown(false)
-		UIMain.size:SetShown(false)
-	else
-		UIMain.move:SetShown(true)
-		UIMain.size:SetShown(true)
-	end
-end)
-UIMain.reset = CreateFrame("Button", nil, UIMain.settings, "GameMenuButtonTemplate")
-UIMain.reset:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 10, -60)
-UIMain.reset:SetSize(60,25)
-UIMain.reset:SetText("Reset")
-UIMain.reset:SetScript("OnClick",
-function (self, button)
-	if (button == "LeftButton")then
-		if (UIMain.resetcf:IsShown()) then
-			UIMain.resetcf:SetShown(false)
-		else
-			UIMain.resetcf:SetShown(true)
-		end
-	end
-end)
-UIMain.resetcf = CreateFrame("Button", nil, UIMain.confirm, "GameMenuButtonTemplate")
-UIMain.resetcf:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 80, -60)
-UIMain.resetcf:SetSize(60,25)
-UIMain.resetcf:SetText("Confirm")
-UIMain.resetcf:SetShown(false)
-UIMain.resetcf:SetScript("OnClick",
-function (self, button)
-	if (button == "LeftButton")then
-		reset()
-	end
-end)
 --Resize
 UIMain.size = CreateFrame("Button", nil, UIMain, "")
 UIMain.size:SetPoint("Bottom", UIMain, "Bottom")
@@ -290,6 +260,56 @@ end)
 UIMain.content = CreateFrame("Frame", "CAmain", UIMain, "")
 UIMain.content:SetPoint("TOP", 0, -30)
 UIMain.content:SetSize(280,400)
+--Settings
+UIMain.settings = CreateFrame("Frame", "CAmain", UIMain, "BasicFrameTemplateWithInset")
+UIMain.settings:SetToplevel(true)
+UIMain.settings:SetPoint("TOPLEFT", UIMain, "TOPLEFT", -40,10);
+UIMain.settings:SetPoint("BOTTOMRIGHT", UIMain, "BOTTOMRIGHT", 10,-10);
+UIMain.settings:SetShown(false)
+UIMain.stitle = UIMain.settings:CreateFontString(nil, "OVERLAY");
+UIMain.stitle:SetFontObject("GameFontHighlight");
+UIMain.stitle:SetPoint("LEFT", UIMain.settings.TitleBg, "LEFT", 5, 0);
+UIMain.stitle:SetText("|cffffff00Settings");
+UIMain.cblock =  CreateFrame("CheckButton", "CAmain", UIMain.settings, "UICheckButtonTemplate")
+UIMain.cblock:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, 0)
+UIMain.cblock:SetSize(20,20)
+_G[UIMain.cblock:GetName() .. "Text"]:SetText("Lock Frame")
+UIMain.cblock:SetChecked(not UIMain.move:IsShown())
+UIMain.cblock:SetScript("PostClick",
+function (self, button, down)
+	if self:GetChecked() then
+		UIMain.move:SetShown(false)
+		UIMain.size:SetShown(false)
+	else
+		UIMain.move:SetShown(true)
+		UIMain.size:SetShown(true)
+	end
+end)
+UIMain.reset = CreateFrame("Button", nil, UIMain.settings, "GameMenuButtonTemplate")
+UIMain.reset:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, -20)
+UIMain.reset:SetSize(60,25)
+UIMain.reset:SetText("Reset")
+UIMain.reset:SetScript("OnClick",
+function (self, button)
+	if (button == "LeftButton")then
+		if (UIMain.resetcf:IsShown()) then
+			UIMain.resetcf:SetShown(false)
+		else
+			UIMain.resetcf:SetShown(true)
+		end
+	end
+end)
+UIMain.resetcf = CreateFrame("Button", nil, UIMain.confirm, "GameMenuButtonTemplate")
+UIMain.resetcf:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 70, -20)
+UIMain.resetcf:SetSize(60,25)
+UIMain.resetcf:SetText("Confirm")
+UIMain.resetcf:SetShown(false)
+UIMain.resetcf:SetScript("OnClick",
+function (self, button)
+	if (button == "LeftButton")then
+		reset()
+	end
+end)
 --ConfirmRemoveFrame
 UIMain.confirm = CreateFrame("Frame", "CAmain", UIMain, "BasicFrameTemplateWithInset")
 UIMain.confirm:SetToplevel(true)
