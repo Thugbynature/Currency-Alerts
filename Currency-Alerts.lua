@@ -8,7 +8,7 @@
 
 --///// test keeping visability after relog, also look into BasicFrameTemplateWithInset and see what the x button does and if save can happen off of it
 --///// test the scale change not moving on size change and on remove (scaleset())
---///// test settings, lock and reset
+--///// test settings, lock, edit, and reset
 
 
 --SAVED VARIABLES
@@ -285,8 +285,25 @@ function (self, button, down)
 		UIMain.size:SetShown(true)
 	end
 end)
+UIMain.cblist =  CreateFrame("CheckButton", "CAmain", UIMain.settings, "UICheckButtonTemplate")
+UIMain.cblist:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, -20)
+UIMain.cblist:SetSize(20,20)
+_G[UIMain.cblist:GetName() .. "Text"]:SetText("Edit List")
+UIMain.cblist:SetChecked(UIMain.move:IsShown())
+UIMain.cblist:SetScript("PostClick",
+function (self, button, down)
+	if self:GetChecked() then
+		UIMain.add:SetShown(true)
+		UIMain.remove:SetShown(true)
+		else
+		UIMain.add:SetShown(false)
+		UIMain.remove:SetShown(false)
+		UIMain.confirm:SetShown(false)
+		UIMain.addbox:SetShown(false)
+	end
+end)
 UIMain.reset = CreateFrame("Button", nil, UIMain.settings, "GameMenuButtonTemplate")
-UIMain.reset:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, -20)
+UIMain.reset:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, -40)
 UIMain.reset:SetSize(60,25)
 UIMain.reset:SetText("Reset")
 UIMain.reset:SetScript("OnClick",
@@ -300,7 +317,7 @@ function (self, button)
 	end
 end)
 UIMain.resetcf = CreateFrame("Button", nil, UIMain.confirm, "GameMenuButtonTemplate")
-UIMain.resetcf:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 70, -20)
+UIMain.resetcf:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 70, -40)
 UIMain.resetcf:SetSize(60,25)
 UIMain.resetcf:SetText("Confirm")
 UIMain.resetcf:SetShown(false)
