@@ -1,14 +1,14 @@
 -- better alert (quest compleate popup)
--- add gold
+-- add gold (would need a system on display to show like 10k, 100k, 1m without going over scale)
 -- frame template cool looking
 -- quest partial compleate alert (aka when i kill 10/10 5/6 10 would alert on finish)
 -- weekly seals warning
--- add settings button with popout frame for lock and reset
 -- get a wow art viewer and find cooler arrow buttons, move symble and options button.
+-- maybe create own BasicFrameTemplateWithInset and its parents and make it custom
 
---///// test keeping visability after relog, also look into BasicFrameTemplateWithInset and see what the x button does and if reset can be forced off of it
---///// maybe create own BasicFrameTemplateWithInset and its parents and make it custom
+--///// test keeping visability after relog, also look into BasicFrameTemplateWithInset and see what the x button does and if save can happen off of it
 --///// test the scale change not moving on size change and on remove (scaleset())
+--///// test settings, lock and reset
 
 
 --SAVED VARIABLES
@@ -38,6 +38,7 @@ local getID --""
 local save --""
 local PopulateLines --""
 local scaleset --""
+local reset --""
 --
 
 --init on each reload/login
@@ -69,12 +70,12 @@ local function init()
 		value = 10;
 		for i=1,20,1 do	list4[i] = 0 end
 		shown = true
+		for i=1,20,1 do	finished[i] = false end
 		save()
 	end
 	--
 
 	for i=1,20,1 do	created[i] = false end
-	for i=1,20,1 do	finished[i] = false end
 	scroll = 0
 	UIMain:SetSize(300, (value * 20)+40)
 	if shown == true then UIMain.up:SetShown(true) else UIMain.up:SetShown(false) end
@@ -126,36 +127,40 @@ UIMain.edit:SetPoint("RIGHT", UIMain.TitleBg, "RIGHT", 0, 0)
 UIMain.edit:SetSize(75,17)
 UIMain.edit:SetText("Edit Goals")
 UIMain.edit:SetScript("OnClick",
-function (self)
-	if (edit == false) then
-		for i=1, count, 1 do
-			UIMain.goal[i]:Enable()
-			UIMain.goal[i]:SetText(UIMain.goal[i]:GetText())
-			UIMain.goal[i]:SetTextColor(1,1,1,1)
-		end
-		edit = true;
-	else
-		for i=1, count, 1 do
-			UIMain.goal[i]:Disable()
-			if (UIMain.goal[i]:GetText() ~= "") then
-				list4[i] = tonumber(UIMain.goal[i]:GetText())
-				UIMain.goal[i]:SetTextColor(1,1,1,.3)
+function (self, button)
+	if (button == "LeftButton")then
+		if (edit == false) then
+			for i=1, count, 1 do
+				UIMain.goal[i]:Enable()
+				UIMain.goal[i]:SetText(UIMain.goal[i]:GetText())
+				UIMain.goal[i]:SetTextColor(1,1,1,1)
 			end
+			edit = true;
+		else
+			for i=1, count, 1 do
+				UIMain.goal[i]:Disable()
+				if (UIMain.goal[i]:GetText() ~= "") then
+					list4[i] = tonumber(UIMain.goal[i]:GetText())
+					UIMain.goal[i]:SetTextColor(1,1,1,.3)
+				end
+			end
+			edit = false;
 		end
-		edit = false;
 	end
 end)
 --Add
 UIMain.add = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.add:SetPoint("RIGHT", UIMain.TitleBg, "RIGHT", -70, 0)
+UIMain.add:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 110, 0)
 UIMain.add:SetSize(17,17)
 UIMain.add:SetText("+")
 UIMain.add:SetScript("OnClick",
-function (self)
-	if (UIMain.addbox:IsShown()) then
-		UIMain.addbox:SetShown(false)
-	else
-		UIMain.addbox:SetShown(true)
+function (self, button)
+	if (button == "LeftButton")then
+		if (UIMain.addbox:IsShown()) then
+			UIMain.addbox:SetShown(false)
+		else
+			UIMain.addbox:SetShown(true)
+		end
 	end
 end)
 --Scroll Up
@@ -188,7 +193,7 @@ function (self, button)
 end)
 --Move
 UIMain.move = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.move:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 95, 0)
+UIMain.move:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 93, 0)
 UIMain.move:SetSize(17,17)
 UIMain.move:SetText("^")
 UIMain.move:SetScript("OnMouseDown",
@@ -201,6 +206,56 @@ UIMain.move:SetScript("OnMouseUp",
 function (self, button)
 	if (button == "LeftButton")then
 		self:GetParent():StopMovingOrSizing() 
+	end
+end)
+--Settings
+UIMain.settings = CreateFrame("Frame", "CAmain", UIMain, "BasicFrameTemplateWithInset")
+UIMain.settings:SetToplevel(true)
+UIMain.settings:SetSize(100, 80);
+UIMain.settings:SetPoint("CENTER", UIMain, "CENTER", 175, 0);
+UIMain.settings:SetShown(false)
+UIMain.stitle = UIMain.settings:CreateFontString(nil, "OVERLAY");
+UIMain.stitle:SetFontObject("GameFontHighlight");
+UIMain.stitle:SetPoint("LEFT", UIMain.settings.TitleBg, "LEFT", 5, 0);
+UIMain.stitle:SetText("|cffffff00Settings");
+UIMain.cblock =  CreateFrame("CheckButton", "CAmain", UIMain.settings, "UICheckButtonTemplate")
+UIMain.cblock:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 10, -40)
+UIMain.cblock:SetSize(20,20)
+_G[UIMain.cblock:GetName() .. "Text"]:SetText("Lock Frame")
+UIMain.cblock:SetChecked(not UIMain.move:IsShown())
+UIMain.cblock:SetScript("PostClick",
+function (self, button, down)
+	if self:GetChecked() then
+		UIMain.move:SetShown(false)
+		UIMain.size:SetShown(false)
+	else
+		UIMain.move:SetShown(true)
+		UIMain.size:SetShown(true)
+	end
+end)
+UIMain.reset = CreateFrame("Button", nil, UIMain.settings, "GameMenuButtonTemplate")
+UIMain.reset:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 10, -60)
+UIMain.reset:SetSize(60,25)
+UIMain.reset:SetText("Reset")
+UIMain.reset:SetScript("OnClick",
+function (self, button)
+	if (button == "LeftButton")then
+		if (UIMain.resetcf:IsShown()) then
+			UIMain.resetcf:SetShown(false)
+		else
+			UIMain.resetcf:SetShown(true)
+		end
+	end
+end)
+UIMain.resetcf = CreateFrame("Button", nil, UIMain.confirm, "GameMenuButtonTemplate")
+UIMain.resetcf:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 80, -60)
+UIMain.resetcf:SetSize(60,25)
+UIMain.resetcf:SetText("Confirm")
+UIMain.resetcf:SetShown(false)
+UIMain.resetcf:SetScript("OnClick",
+function (self, button)
+	if (button == "LeftButton")then
+		reset()
 	end
 end)
 --Resize
@@ -250,48 +305,50 @@ UIMain.cf:SetPoint("CENTER", UIMain.confirm, "CENTER", 0, -10)
 UIMain.cf:SetSize(60,25)
 UIMain.cf:SetText("Delete")
 UIMain.cf:SetScript("OnClick",
-function (self)
-	if delete == count then
-		if count > 1 then
-			delete = 0
-			list[count] = nil
-			list2[count] = nil
-			list3[count] = nil
-			list4[count] = nil
-			count = count-1
-			getList()
-			PopulateLines()
-		end
-	else
-			list[delete] = nil
-			list2[delete] = nil
-			list3[delete] = nil
-			list4[delete] = nil
-			for i=1,20-delete,1 do
-				if list[delete+i] ~= nil then
-					list[delete+i-1] = list[delete+i]
-					list2[delete+i-1] = list2[delete+i]
-					list3[delete+i-1] = list3[delete+i]
-					list4[delete+i-1] = list4[delete+i]
-				end
+function (self, button)
+	if (button == "LeftButton")then
+		if delete == count then
+			if count > 1 then
+				delete = 0
+				list[count] = nil
+				list2[count] = nil
+				list3[count] = nil
+				list4[count] = nil
+				count = count-1
+				getList()
+				PopulateLines()
 			end
-			list[count] = nil
-			list2[count] = nil
-			list3[count] = nil
-			list4[count] = nil
-			count = count-1
-			getList()
-			PopulateLines()
-			delete = 0
+		else
+				list[delete] = nil
+				list2[delete] = nil
+				list3[delete] = nil
+				list4[delete] = nil
+				for i=1,20-delete,1 do
+					if list[delete+i] ~= nil then
+						list[delete+i-1] = list[delete+i]
+						list2[delete+i-1] = list2[delete+i]
+						list3[delete+i-1] = list3[delete+i]
+						list4[delete+i-1] = list4[delete+i]
+					end
+				end
+				list[count] = nil
+				list2[count] = nil
+				list3[count] = nil
+				list4[count] = nil
+				count = count-1
+				getList()
+				PopulateLines()
+				delete = 0
+		end
+		scaleset()
+		UIMain.confirm:SetShown(false)
 	end
-	scaleset()
-	UIMain.confirm:SetShown(false) 
 end)
 -- Add Editbox
 UIMain.addbox = CreateFrame("EditBox", "CAmain", UIMain, "InputBoxTemplate");
 UIMain.addbox:SetSize(75,17)
 UIMain.addbox:SetAutoFocus(false)
-UIMain.addbox:SetPoint("RIGHT", UIMain.TitleBg, "RIGHT", -85, 0)
+UIMain.addbox:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 127, 0)
 UIMain.addbox:SetText("Enter Name")
 UIMain.addbox:SetShown(false)
 UIMain.addbox:SetScript("OnEditFocusGained",
@@ -487,10 +544,12 @@ function PopulateLines()
 					UIMain.remove[i]:SetSize(20,20)
 					UIMain.remove[i]:SetText("-")
 					UIMain.remove[i]:SetScript("OnClick", 
-					function (self)
-						if (edit == false) then
-							delete = i;
-							UIMain.confirm:SetShown(true)
+					function (self, button)
+						if (button == "LeftButton")then
+							if (edit == false) then
+								delete = i;
+								UIMain.confirm:SetShown(true)
+							end
 						end
 					end)
 					created[i] = true
@@ -557,6 +616,27 @@ function PopulateLines()
 	save()
 end
 
+-- reset
+local function reset()
+	CASAVElist = nil
+	CASAVEcount[1] = nil
+	CASAVEcount[2] = nil
+	CASAVEcreated = nil
+	CASAVElist4 = nil
+	CASAVEfinished = nil
+	CASAVEcount[3] = nil
+	UIMain.resetcf:SetShown(false)
+	UIMain.settings:SetShown(false)
+	UIMain.move:SetShown(true)
+	UIMain.size:SetShown(true)
+	UIMain.cblock:SetChecked(not UIMain.move:IsShown())
+	UIMain.addbox:SetShown(false)
+	UIMain.confirm:SetShown(false)
+	init()
+	getList()
+	PopulateLines()
+end
+
 -- slash commands
 SLASH_CA1 = "/ca"
 SlashCmdList["CA"] = function()
@@ -570,7 +650,7 @@ SlashCmdList["CA"] = function()
 end
 
 -- save global VARIABLES
-function save()
+local function save()
 	CASAVElist = list
 	CASAVEcount[1] = count
 	CASAVEcount[2] = value
