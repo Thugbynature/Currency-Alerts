@@ -10,12 +10,12 @@
 -- so you can shrink down to 3 and then click to jump through them, or expand to a max of your list size
 
 --SAVED VARIABLES
-
 CASAVElist = {}
 CASAVElist4 = {}
-CASAVEcount = {}
+CASAVEcount = count
 CASAVEcreated = {}
 CASAVEfinished = {}
+CASAVEvalue = {}
 
 --Local Variables
 local list = {}; --name array
@@ -36,14 +36,13 @@ local save --""
 local PopulateLines --""
 
 --init on each reload/login
-local UIMain = CreateFrame("Frame", "CAmain", UIParent, "BasicFrameTemplateWithInset")
 local function init()
 	list = CASAVElist
-	count = CASAVEcount[1]
-	value = CASAVEcount[2]
+	count = CASAVEcount
 	created = CASAVEcreated
 	list4 = CASAVElist4
 	finished = CASAVEfinished
+	value = CASAVEvalue
 	if (count == nil) then
 		list[1] = "veiled argunite";
 		list[2] = "seal of broken fate";
@@ -58,13 +57,11 @@ local function init()
 		count = 10;
 		value = 10;
 		for i=1,20,1 do	list4[i] = 0 end
+		UIMain:SetShown(false)
 		save()
 	end
 	for i=1,20,1 do	created[i] = false end
 	for i=1,20,1 do	finished[i] = false end
-	scroll = 0
-	UIMain:SetSize(300, (value * 20)+40)
-	UIMain:SetShown(false)
 end
 
 -- Event Handlers
@@ -84,6 +81,7 @@ end
 
 --UI
 --Frame
+local UIMain = CreateFrame("Frame", "CAmain", UIParent, "BasicFrameTemplateWithInset")
 UIMain.goal = {}
 UIMain.icon = {}
 UIMain.line = {}
@@ -100,7 +98,7 @@ UIMain:SetSize(300, 200);
 UIMain:SetMinResize(300,100)
 UIMain:SetMaxResize(300,400)
 UIMain:SetResizable(true)
-UIMain:SetPoint("TOPLEFT", UIParent, "BOTTOMRIGHT", -450, 350);
+UIMain:SetPoint("BOTTOMRIGHT", UIParent, "BOTTOMRIGHT", -150, 150);
 UIMain.title = UIMain:CreateFontString(nil, "ARTWORK");
 UIMain.title:SetFontObject("GameFontHighlight");
 UIMain.title:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 5, 0);
@@ -145,11 +143,11 @@ function (self)
 	end
 end)
 --Scroll Up
-UIMain.up = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.up:SetPoint("TOPRIGHT", UIMain, "TOPRIGHT", -7, -25)
-UIMain.up:SetSize(20,20)
-UIMain.up:SetText("^")
-UIMain.up:SetScript("OnMouseDown",
+UIMain.move = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
+UIMain.move:SetPoint("TOPRIGHT", UIMain, "TOPRIGHT", -20, -30)
+UIMain.move:SetSize(30,30)
+UIMain.move:SetText("^")
+UIMain.move:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
 		if scroll > 0 then scroll = scroll-1 end
@@ -158,11 +156,11 @@ function (self, button)
 	end
 end)
 --Scroll down
-UIMain.down = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.down:SetPoint("BOTTOMRIGHT", UIMain, "BOTTOMRIGHT",-7, 7)
-UIMain.down:SetSize(20,20)
-UIMain.down:SetText("v")
-UIMain.down:SetScript("OnMouseDown",
+UIMain.move = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
+UIMain.move:SetPoint("BOTTOMRIGHT", UIMain, "BOTTOMRIGHT", 10, -30)
+UIMain.move:SetSize(30,30)
+UIMain.move:SetText("v")
+UIMain.move:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
 		if (value + scroll +1) <= count then
@@ -196,17 +194,6 @@ UIMain.size:SetSize(300,10)
 UIMain.size:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
-		for i = 1, count, 1 do
-			if created[i] == true then
-						UIMain.icon[i]:SetShown(false)
-						UIMain.line[i]:SetShown(false)
-						UIMain.amount[i]:SetShown(false)
-						UIMain.goal[i]:SetShown(false)
-						UIMain.remove[i]:SetShown(false)
-			end
-		end
-		UIMain.up:SetShown(false)
-		UIMain.down:SetShown(false)
 		self:GetParent():StartSizing()
 	end
 end)
@@ -217,11 +204,9 @@ function (self, button)
 		local w
 		local h
 		w, h = UIMain:GetSize()
-		h = h-40
 		value = math.floor(h/20)
 		if (value > count) then value = count end
-		if (value * 20) <60 then value = 3 end
-		UIMain:SetSize(w, (value * 20)+40)
+		UiMain.SetSize(w,(value*20))
 		scroll = 0
 		UIMain.content:SetPoint("TOP", 0, -30)
 		PopulateLines()
@@ -230,7 +215,7 @@ end)
 --ContentFrame
 UIMain.content = CreateFrame("Frame", "CAmain", UIMain, "")
 UIMain.content:SetPoint("TOP", 0, -30)
-UIMain.content:SetSize(280,400)
+UIMain.content:SetSize(300,400)
 --ConfirmRemoveFrame
 UIMain.confirm = CreateFrame("Frame", "CAmain", UIMain, "BasicFrameTemplateWithInset")
 UIMain.confirm:SetToplevel(true)
@@ -280,17 +265,6 @@ function (self)
 			PopulateLines()
 			delete = 0
 	end
-	local w
-	local h
-	w, h = UIMain:GetSize()
-	h = h-40
-	value = math.floor(h/20)
-	if (value > count) then value = count end
-	if (value * 20) <60 then value = 3 end
-	UIMain:SetSize(w, (value * 20)+40)
-	scroll = 0
-	UIMain.content:SetPoint("TOP", 0, -30)
-	PopulateLines()
 	UIMain.confirm:SetShown(false) 
 end)
 -- Add Editbox
@@ -428,7 +402,7 @@ function PopulateLines()
 					-- Name
 					UIMain.line[i] = UIMain.content:CreateFontString(nil, "ARTWORK");
 					UIMain.line[i]:SetFontObject("GameFontHighlight");
-					UIMain.line[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 55, 15+(-i*20));
+					UIMain.line[i]:SetPoint("TOPLEFT", content, "TOPLEFT", 55, 15+(-i*20));
 					UIMain.line[i]:SetText("|cff00ffff" .. list[i])
 					-- Amount
 					UIMain.amount[i] = UIMain.content:CreateFontString(nil, "ARTWORK");
@@ -537,8 +511,6 @@ function PopulateLines()
 			end
 		end
 	end
-	if scroll ~= 0 then UIMain.up:SetShown(true) else UIMain.up:SetShown(false) end
-	if (value+scroll) < count then UIMain.down:SetShown(true) else UIMain.down:SetShown(false) end
 	save()
 end
 
@@ -555,9 +527,9 @@ end
 -- save global VARIABLES
 function save()
 	CASAVElist = list
-	CASAVEcount[1] = count
-	CASAVEcount[2] = value
+	CASAVEcount = count
 	CASAVEcreated = created
 	CASAVElist4 = list4
 	CASAVEfinished = finished
+	CASAVEvalue = value
 end
