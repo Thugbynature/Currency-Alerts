@@ -8,6 +8,7 @@
 
 --///// test keeping visability after relog, also look into BasicFrameTemplateWithInset and see what the x button does and if reset can be forced off of it
 --///// maybe create own BasicFrameTemplateWithInset and its parents and make it custom
+--///// test the scale change not moving on size change and on remove (scaleset())
 
 
 --SAVED VARIABLES
@@ -36,6 +37,7 @@ local getList --function declaration
 local getID --""
 local save --""
 local PopulateLines --""
+local scaleset --""
 --
 
 --init on each reload/login
@@ -204,7 +206,7 @@ end)
 --Resize
 UIMain.size = CreateFrame("Button", nil, UIMain, "")
 UIMain.size:SetPoint("Bottom", UIMain, "Bottom")
-UIMain.size:SetSize(300,10)
+UIMain.size:SetSize(300,8	)
 UIMain.size:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
@@ -226,22 +228,7 @@ UIMain.size:SetScript("OnMouseUp",
 function (self, button)
 	if (button == "LeftButton")then
 		self:GetParent():StopMovingOrSizing()
-		local w
-		local h
-		w, h = UIMain:GetSize()
-		h = h-40
-		value = math.floor(h/20)
-		if (value > count) then value = count end
-		if (value * 20) <60 then value = 3 end
-		local top = UIMain:GetTop()
-		local left = Region:GetLeft()
-		UIMain:SetSize(w, (value * 20)+40)
-		local hw = w/2
-		local hh = ((value * 20)+40)/2
-		UIMain:SetPoint("CENTER", UIParent, "BOTTOMRIGHT", left+hw,  top+hh);
-		scroll = 0
-		UIMain.content:SetPoint("TOP", 0, -30)
-		PopulateLines()
+		scaleset()
 	end
 end)
 --ContentFrame
@@ -297,17 +284,7 @@ function (self)
 			PopulateLines()
 			delete = 0
 	end
-	local w
-	local h
-	w, h = UIMain:GetSize()
-	h = h-40
-	value = math.floor(h/20)
-	if (value > count) then value = count end
-	if (value * 20) <60 then value = 3 end
-	UIMain:SetSize(w, (value * 20)+40)
-	scroll = 0
-	UIMain.content:SetPoint("TOP", 0, -30)
-	PopulateLines()
+	scaleset()
 	UIMain.confirm:SetShown(false) 
 end)
 -- Add Editbox
@@ -369,6 +346,27 @@ UIMain.addbox:SetScript("OnEnterPressed",
 		end
 	end
 end)
+--
+
+-- Scale Set
+local function scaleset()
+	local w
+	local h
+	w, h = UIMain:GetSize()
+	h = h-40
+	value = math.floor(h/20)
+	if (value > count) then value = count end
+	if (value * 20) <60 then value = 3 end
+	local top = UIMain:GetTop()
+	local left = Region:GetLeft()
+	UIMain:SetSize(w, (value * 20)+40)
+	local hw = w/2
+	local hh = ((value * 20)+40)/2
+	UIMain:SetPoint("CENTER", UIParent, "BOTTOMRIGHT", left+hw,  top+hh);
+	scroll = 0
+	UIMain.content:SetPoint("TOP", 0, -30)
+	PopulateLines()
+end
 --
 
 -- ID registry
