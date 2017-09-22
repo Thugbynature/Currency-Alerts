@@ -3,19 +3,20 @@
 -- frame template cool looking
 -- quest partial compleate alert (aka when i kill 10/10 5/6 10 would alert on finish)
 -- weekly seals warning
--- scroll preventing clikc on edit
+-- add settings button with popout frame for lock and reset
+-- get a wow art viewer and find cooler arrow buttons, move symble and options button.
 
--- custom scroll system, resize snaps to 20s, add up and down arrows, snap to max size being count x20
--- up and downs arrows change the start point for i in for loop, min of count - i = 3 
--- so you can shrink down to 3 and then click to jump through them, or expand to a max of your list size
+--///// test keeping visability after relog, also look into BasicFrameTemplateWithInset and see what the x button does and if reset can be forced off of it
+--///// maybe create own BasicFrameTemplateWithInset and its parents and make it custom
+
 
 --SAVED VARIABLES
-
 CASAVElist = {}
 CASAVElist4 = {}
 CASAVEcount = {}
 CASAVEcreated = {}
 CASAVEfinished = {}
+--
 
 --Local Variables
 local list = {}; --name array
@@ -30,20 +31,27 @@ local edit = false
 local delete
 local scroll = 0
 local value
+local shown = false
 local getList --function declaration
 local getID --""
 local save --""
 local PopulateLines --""
+--
 
 --init on each reload/login
 local UIMain = CreateFrame("Frame", "CAmain", UIParent, "BasicFrameTemplateWithInset")
 local function init()
+	-- load saved globals
 	list = CASAVElist
 	count = CASAVEcount[1]
 	value = CASAVEcount[2]
+	shown = CASAVEcount[3]
 	created = CASAVEcreated
 	list4 = CASAVElist4
 	finished = CASAVEfinished
+	--
+
+	--No saves/First run
 	if (count == nil) then
 		list[1] = "veiled argunite";
 		list[2] = "seal of broken fate";
@@ -58,13 +66,16 @@ local function init()
 		count = 10;
 		value = 10;
 		for i=1,20,1 do	list4[i] = 0 end
+		shown = true
 		save()
 	end
+	--
+
 	for i=1,20,1 do	created[i] = false end
 	for i=1,20,1 do	finished[i] = false end
 	scroll = 0
 	UIMain:SetSize(300, (value * 20)+40)
-	UIMain:SetShown(false)
+	if shown == true then UIMain.up:SetShown(true) else UIMain.up:SetShown(false) end
 end
 
 -- Event Handlers
@@ -81,6 +92,7 @@ local function OnEvent(frame, event, ...)
 		end
 	end
 end
+--
 
 --UI
 --Frame
@@ -98,7 +110,7 @@ UIMain:RegisterEvent("CHAT_MSG_CURRENCY")
 UIMain:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
 UIMain:SetSize(300, 200);
 UIMain:SetMinResize(300,100)
-UIMain:SetMaxResize(300,400)
+UIMain:SetMaxResize(300,440)
 UIMain:SetResizable(true)
 UIMain:SetPoint("TOPLEFT", UIParent, "BOTTOMRIGHT", -450, 350);
 UIMain.title = UIMain:CreateFontString(nil, "ARTWORK");
@@ -221,7 +233,12 @@ function (self, button)
 		value = math.floor(h/20)
 		if (value > count) then value = count end
 		if (value * 20) <60 then value = 3 end
+		local top = UIMain:GetTop()
+		local left = Region:GetLeft()
 		UIMain:SetSize(w, (value * 20)+40)
+		local hw = w/2
+		local hh = ((value * 20)+40)/2
+		UIMain:SetPoint("CENTER", UIParent, "BOTTOMRIGHT", left+hw,  top+hh);
 		scroll = 0
 		UIMain.content:SetPoint("TOP", 0, -30)
 		PopulateLines()
@@ -547,8 +564,10 @@ SLASH_CA1 = "/ca"
 SlashCmdList["CA"] = function()
 	if (UIMain:IsShown()) then
 		UIMain:SetShown(false)
+		save()
 	else
 		UIMain:SetShown(true)
+		save()
 	end
 end
 
@@ -560,4 +579,5 @@ function save()
 	CASAVEcreated = created
 	CASAVElist4 = list4
 	CASAVEfinished = finished
+	CASAVEcount[3] = UIMain.icon[i]:IsShown()
 end
