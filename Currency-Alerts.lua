@@ -184,7 +184,7 @@ function (self, button)
 		if (UIMain.settings:IsShown()) then
 			UIMain.settings:SetShown(false)
 			UIMain.content:SetShown(true)
-			if not lock then UIMain.size:SetShown(true) end
+			UIMain.size:SetShown(not lock)
 			PopulateLines()
 		else
 			UIMain.settings:SetShown(true)
@@ -281,7 +281,7 @@ UIMain.settings:SetShown(false)
 UIMain.cblock =  CreateFrame("CheckButton", "CAmain", UIMain.settings, "UICheckButtonTemplate")
 UIMain.cblock:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, 3)
 UIMain.cblock:SetSize(20,20)
-UIMain.cblock:SetChecked(not UIMain.move:IsShown())
+UIMain.cblock:SetChecked(not lock)
 UIMain.cblockt = UIMain.settings:CreateFontString(nil, "ARTWORK");
 UIMain.cblockt:SetFontObject("GameFontHighlight");
 UIMain.cblockt:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 17, 0);
@@ -290,10 +290,12 @@ UIMain.cblock:SetScript("PostClick",
 function (self, button, down)
 	if self:GetChecked() then
 		UIMain.move:SetShown(false)
-		lock = false
+		lock = true
+		save()
 	else
 		UIMain.move:SetShown(true)
-		lock = true
+		lock = false
+		save()
 	end
 end)
 UIMain.cblist =  CreateFrame("CheckButton", "CAmain", UIMain.settings, "UICheckButtonTemplate")
@@ -309,11 +311,13 @@ function (self, button, down)
 	if self:GetChecked() then
 		UIMain.add:SetShown(true)
 		editl = true
+	save()
 		else
 		UIMain.add:SetShown(false)
 		UIMain.confirm:SetShown(false)
 		UIMain.addbox:SetShown(false)
 		editl = false
+	save()
 	end
 end)
 UIMain.reset = CreateFrame("Button", nil, UIMain.settings, "GameMenuButtonTemplate")
@@ -622,7 +626,7 @@ function PopulateLines()
 			end
 		end
 		if created[i] == true then
-			if UIMain.cblist:GetChecked() then
+			if editl then
 				UIMain.remove[i]:SetShown(true)
 			else
 				UIMain.remove[i]:SetShown(false)
@@ -667,9 +671,11 @@ function PopulateLines()
 	end
 	if scroll ~= 0 then UIMain.up:SetShown(true) else UIMain.up:SetShown(false) end
 	if (value+scroll) < count then UIMain.down:SetShown(true) else UIMain.down:SetShown(false) end
-	UIMain.cblock:SetChecked(not lock)
+	UIMain.cblock:SetChecked(lock)
 	UIMain.cblist:SetChecked(editl)
-	if not lock then UIMain.size:SetShown(true) end
+	UIMain.size:SetShown(not lock)
+	UIMain.move:SetShown(not lock)
+	UIMain.add:SetShown(editl)
 	save()
 end
 
@@ -714,6 +720,6 @@ function save()
 	CASAVElist4 = list4
 	CASAVEfinished = finished
 	CASAVEcount[3] = UIMain:IsShown()
-	CASAVEcount[4] = UIMain.cblock:GetChecked()
-	CASAVEcount[5] = UIMain.cblist:GetChecked()
+	CASAVEcount[4] = lock
+	CASAVEcount[5] = editl
 end
