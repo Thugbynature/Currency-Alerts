@@ -6,6 +6,10 @@
 -- get a wow art viewer and find cooler arrow buttons, move symble and options button.
 -- maybe create own BasicFrameTemplateWithInset and its parents and make it custom
 
+--***** if close buttons work change all other buttons to that style
+
+-- ///// test new appearance
+-- ///// test close buttons and on click look
 
 --SAVED VARIABLES
 CASAVElist = {}
@@ -38,8 +42,17 @@ local scaleset --""
 local reset --""
 --
 
+--frame declarations
+local UIMain = CreateFrame("Frame", "CAmain", UIParent, "")
+UIMain.goal = {}
+UIMain.icon = {}
+UIMain.line = {}
+UIMain.content = {}
+UIMain.amount = {}
+UIMain.remove = {}
+UIMain.resetcf = {}
+
 --init
-local UIMain = CreateFrame("Frame", "CAmain", UIParent, "BasicFrameTemplateWithInset")
 local function init()
 	-- load saved globals
 	list = CASAVElist
@@ -78,7 +91,7 @@ local function init()
 	if not UIMain.cblock:GetChecked() then UIMain.move:SetShown(true) end
 	for i=1,20,1 do	created[i] = false end
 	scroll = 0
-	UIMain:SetSize(300, (value * 20)+40)
+	UIMain:SetSize(300, (value * 20)+20)
 	if shown == true then UIMain.up:SetShown(true) else UIMain.up:SetShown(false) end
 end
 
@@ -100,33 +113,55 @@ end
 
 --UI
 --Frame
-UIMain.goal = {}
-UIMain.icon = {}
-UIMain.line = {}
-UIMain.content = {}
-UIMain.amount = {}
-UIMain.remove = {}
-UIMain.resetcf = {}
+UIMain:SetBackdropColor(0, 0, 0, .75)
 UIMain:SetMovable(true)
 UIMain.enableMouse="true"
 UIMain:SetScript("OnEvent", OnEvent)
 UIMain:RegisterEvent("PLAYER_LOGIN")
-UIMain:RegisterEvent("CHAT_MSG_CURRENCY")
 UIMain:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
 UIMain:SetSize(300, 200)
 UIMain:SetMinResize(300,100)
-UIMain:SetMaxResize(300,440)
+UIMain:SetMaxResize(300,420)
 UIMain:SetResizable(true)
 UIMain:SetPoint("TOPLEFT", UIParent, "BOTTOMRIGHT", -450, 350)
+UIMain.titlef = CreateFrame("Frame", "CAmain", UIMain, "")
+UIMain.titlef:SetBackdropColor(0, 0, 0, .85)
+UIMain.titleF:SetPoint("TOPLEFT", UIMain, "TOPLEFT")
+UIMain.titleF:SetPoint("BOTTOMRIGHT", UIMain, "TOPRIGHT", -20, -20)
 UIMain.title = UIMain:CreateFontString(nil, "ARTWORK")
 UIMain.title:SetFontObject("GameFontHighlight")
-UIMain.title:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 5, 0)
+UIMain.title:SetPoint("LEFT", UIMain.titlef, "LEFT", 5, 0)
 UIMain.title:SetText("|cffffff00Currency Alerts")
 --Buttons
+--Close
+UIMain.close = CreateFrame("Button", nil, UIMain, "")
+UIMain.close:SetPoint("TOPRIGHT", UIMain, "TOPRIGHT")
+UIMain.close:SetSize(20,20)
+UIMain.close:SetText("X")
+UIMain.close:SetBackdropColor(255, 0, 0, 1)
+UIMain.close:SetScript("OnClick",
+function (self, button)
+	if (button == "LeftButton")then
+		UIMain:SetShown(false)
+		save()
+	end
+end)
+UIMain.close:SetScript("PreClick",
+function (self, button)
+	if (button == "LeftButton")then
+		self:SetBackdropColor(193, 0, 0, 1)
+	end
+end)
+UIMain.close:SetScript("PostClick",
+function (self, button)
+	if (button == "LeftButton")then
+		self:SetBackdropColor(255, 0, 0, 1)
+	end
+end)
 --Edit
 UIMain.edit = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.edit:SetPoint("RIGHT", UIMain.TitleBg, "RIGHT", 0, 0)
-UIMain.edit:SetSize(75,17)
+UIMain.edit:SetPoint("RIGHT", UIMain.titlef, "RIGHT")
+UIMain.edit:SetSize(75,20)
 UIMain.edit:SetText("Edit Goals")
 UIMain.edit:SetScript("OnClick",
 function (self, button)
@@ -152,7 +187,7 @@ function (self, button)
 end)
 --Add
 UIMain.add = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.add:SetPoint("RIGHT", UIMain.TitleBg, "RIGHT", -75, 0)
+UIMain.add:SetPoint("RIGHT", UIMain.titlef, "RIGHT", -75, 0)
 UIMain.add:SetSize(17,17)
 UIMain.add:SetText("+")
 UIMain.add:SetScript("OnClick",
@@ -169,8 +204,8 @@ function (self, button)
 end)
 --Settingsb
 UIMain.settingsb = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.settingsb:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 95, 0)
-UIMain.settingsb:SetSize(17,17)
+UIMain.settingsb:SetPoint("LEFT", UIMain.titlef, "LEFT", 95, 0)
+UIMain.settingsb:SetSize(20,20)
 UIMain.settingsb:SetText("*")
 UIMain.settingsb:SetScript("OnClick",
 function (self, button)
@@ -198,7 +233,7 @@ UIMain.up:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
 		if scroll > 0 then scroll = scroll-1 end
-		UIMain.content:SetPoint("TOP", 0, -30 + (scroll*20))
+		UIMain.content:SetPoint("TOP", 0, -20 + (scroll*20))
 		PopulateLines()
 	end
 end)
@@ -212,15 +247,15 @@ function (self, button)
 	if (button == "LeftButton")then
 		if (value + scroll +1) <= count then
 			scroll = scroll+1
-			UIMain.content:SetPoint("TOP", 0, -30 + (scroll*20))
+			UIMain.content:SetPoint("TOP", 0, -20 + (scroll*20))
 			PopulateLines()
 		end
 	end
 end)
 --Move
 UIMain.move = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.move:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 110, 0)
-UIMain.move:SetSize(17,17)
+UIMain.move:SetPoint("LEFT", UIMain.titlef, "LEFT", 115, 0)
+UIMain.move:SetSize(20,20)
 UIMain.move:SetText("^")
 UIMain.move:SetScript("OnMouseDown",
 function (self, button)
@@ -237,7 +272,8 @@ end)
 --Resize
 UIMain.size = CreateFrame("Button", nil, UIMain, "")
 UIMain.size:SetPoint("Bottom", UIMain, "Bottom")
-UIMain.size:SetSize(300,8	)
+UIMain.size:SetBackdropColor(249, 245, 5, .12)
+UIMain.size:SetSize(300,8)
 UIMain.size:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
@@ -269,9 +305,10 @@ UIMain.content:SetSize(280,400)
 --Settings
 UIMain.settings = CreateFrame("Frame", "CAmain", UIMain, "")
 UIMain.settings:SetToplevel(true)
-UIMain.settings:SetPoint("TOPLEFT", UIMain, "TOPLEFT", 10,-30)
+UIMain.settings:SetPoint("TOPLEFT", UIMain, "TOPLEFT", 10,-20)
 UIMain.settings:SetPoint("BOTTOMRIGHT", UIMain, "BOTTOMRIGHT", -10, 10)
 UIMain.settings:SetShown(false)
+UIMain.settings:SetBackdropColor(20, 20, 20, .75)
 UIMain.cblock =  CreateFrame("CheckButton", "CAmain", UIMain.settings, "UICheckButtonTemplate")
 UIMain.cblock:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, 3)
 UIMain.cblock:SetSize(20,20)
@@ -329,7 +366,7 @@ function (self, button)
 	end
 end)
 UIMain.resetcf = CreateFrame("Button", nil, UIMain.settings, "GameMenuButtonTemplate")
-UIMain.resetcf:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 70, -40)
+UIMain.resetcf:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 63, -40)
 UIMain.resetcf:SetSize(60,20)
 UIMain.resetcf:SetText("Confirm")
 UIMain.resetcf:SetShown(false)
@@ -340,17 +377,17 @@ function (self, button)
 	end
 end)
 --ConfirmRemoveFrame
-UIMain.confirm = CreateFrame("Frame", "CAmain", UIMain, "BasicFrameTemplateWithInset")
+UIMain.confirm = CreateFrame("Frame", "CAmain", UIMain, "")
 UIMain.confirm:SetToplevel(true)
-UIMain.confirm:SetSize(75, 55)
-UIMain.confirm:SetPoint("CENTER", UIMain, "CENTER", 175, 0)
-UIMain.confirm:SetShown(false) 
+UIMain.confirm:SetSize(70, 55)
+UIMain.confirm:SetPoint("CENTER", UIMain, "CENTER")
+UIMain.confirm:SetShown(false)
 UIMain.ctitle = UIMain.confirm:CreateFontString(nil, "OVERLAY")
 UIMain.ctitle:SetFontObject("GameFontHighlight")
-UIMain.ctitle:SetPoint("LEFT", UIMain.confirm.TitleBg, "LEFT", 5, 0)
+UIMain.ctitle:SetPoint("TOPLEFT", UIMain.confirm, "TOPLEFT")
 UIMain.ctitle:SetText("|cffffff00Confirm")
 UIMain.cf = CreateFrame("Button", nil, UIMain.confirm, "GameMenuButtonTemplate")
-UIMain.cf:SetPoint("CENTER", UIMain.confirm, "CENTER", 0, -10)
+UIMain.cf:SetPoint("BOTTOMLEFT", UIMain.confirm, "BOTTOMLEFT", -5, -5)
 UIMain.cf:SetSize(60,25)
 UIMain.cf:SetText("Delete")
 UIMain.cf:SetScript("OnClick",
@@ -393,11 +430,34 @@ function (self, button)
 		UIMain.confirm:SetShown(false)
 	end
 end)
+UIMain.cfcl = CreateFrame("Button", nil, UIMain.confirm, "")
+UIMain.cfcl:SetPoint("TOPRIGHT", UIMain.confirm, "TOPRIGHT")
+UIMain.cfcl:SetSize(20,20)
+UIMain.cfcl:SetText("X")
+UIMain.cfcl:SetBackdropColor(255, 0, 0, 1)
+UIMain.cfcl:SetScript("OnClick",
+function (self, button)
+	if (button == "LeftButton")then
+		UIMain.confirm:SetShown(false)
+	end
+end)
+UIMain.cfcl:SetScript("PreClick",
+function (self, button)
+	if (button == "LeftButton")then
+		self:SetBackdropColor(193, 0, 0, 1)
+	end
+end)
+UIMain.cfcl:SetScript("PostClick",
+function (self, button)
+	if (button == "LeftButton")then
+		self:SetBackdropColor(255, 0, 0, 1)
+	end
+end)
 -- Add Editbox
 UIMain.addbox = CreateFrame("EditBox", "CAmain", UIMain, "InputBoxTemplate")
-UIMain.addbox:SetSize(65,17)
+UIMain.addbox:SetSize(65,20)
 UIMain.addbox:SetAutoFocus(false)
-UIMain.addbox:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 117, 0)
+UIMain.addbox:SetPoint("LEFT", UIMain.titlef, "LEFT", 115, 0)
 UIMain.addbox:SetJustifyH("RIGHT")
 UIMain.addbox:SetText("Name")
 UIMain.addbox:SetShown(false)
@@ -460,13 +520,13 @@ function scaleset()
 	local w
 	local h
 	w, h = UIMain:GetSize()
-	h = h-40
+	h = h-20
 	value = math.floor(h/20)
 	if (value > count) then value = count end
 	if (value * 20) <60 then value = 3 end
-	UIMain:SetSize(w, (value * 20)+40)
+	UIMain:SetSize(w, (value * 20)+20)
 	scroll = 0
-	UIMain.content:SetPoint("TOP", 0, -30)
+	UIMain.content:SetPoint("TOP", 0, -20)
 	PopulateLines()
 end
 --
