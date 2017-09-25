@@ -9,6 +9,8 @@
 --***** if close buttons work change all other buttons to that style
 --***** create textures for frames, change the typed symbols for the icons, might need to be white for new black design
 --"" might want to make X for close turn red on hover over but stay black normally, maybe with a bit of an outline
+--***** rename icons and put them in a seperate folder
+--***** look into quest compleate alert and add how to add to it, if thats is too hard create a frame with a movable toggle and resize and display alearts on it
 
 -- ///// test that save still workes with CASAVEcreated removed
 -- ///// test new appearance
@@ -577,19 +579,15 @@ end
 -- Get currency information from wow
 function getList()
 	for i=1, count, 1 do
-		local ins = {}
 		local ins1
 		local ins2
 		local ins3
 		if getID(list[i]) == nil then return nil end
 		ins1,ins2,ins3 = GetCurrencyInfo(getID(list[i]))
-		ins[1] = ins1
-		ins[2] = ins2
-		ins[3] = ins3
 		
-		list[i] = ins[1]
-		list2[i] = ins[2]
-		list3[i] = ins[3]
+		list[i] = ins1
+		list2[i] = ins2
+		list3[i] = ins3
 		if(list4[i] == nil) then list4[i] = 0 end
 	end
 end
