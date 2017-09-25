@@ -12,6 +12,7 @@
 --***** rename icons and put them in a seperate folder
 --***** look into quest compleate alert and add how to add to it, if thats is too hard create a frame with a movable toggle and resize and display alearts on it
 
+-- ///// test what happens if you click then drag off buttons before releasing, may need to check if mouse is over button on the result, or change from on click to on mouse up for functions
 -- ///// test that save still workes with CASAVEcreated removed
 -- ///// test new appearance
 -- ///// test close buttons and on click look
@@ -157,7 +158,7 @@ function (self, button)
 		self:SetBackdropColor(193, 0, 0, 1)
 	end
 end)
-UIMain.close:SetScript("PostClick",
+UIMain.close:SetScript("OnMouseUp",
 function (self, button)
 	if (button == "LeftButton")then
 		self:SetBackdropColor(255, 0, 0, 1)
@@ -452,7 +453,7 @@ function (self, button)
 		self:SetBackdropColor(193, 0, 0, 1)
 	end
 end)
-UIMain.cfcl:SetScript("PostClick",
+UIMain.cfcl:SetScript("OnMouseUp",
 function (self, button)
 	if (button == "LeftButton")then
 		self:SetBackdropColor(255, 0, 0, 1)
