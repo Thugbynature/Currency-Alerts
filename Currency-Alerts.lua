@@ -6,16 +6,11 @@
 -- get a wow art viewer and find cooler arrow buttons, move symble and options button.
 -- maybe create own BasicFrameTemplateWithInset and its parents and make it custom
 
---///// test keeping visability after relog, also look into BasicFrameTemplateWithInset and see what the x button does and if save can happen off of it
---///// test the scale change not moving on size change and on remove (scaleset())
---///// test settings, lock, edit, and reset
-
 
 --SAVED VARIABLES
 CASAVElist = {}
 CASAVElist4 = {}
 CASAVEcount = {}
-CASAVEcreated = {}
 CASAVEfinished = {}
 --
 
@@ -24,17 +19,17 @@ local list = {} --name array
 local list2 = {} --amount array
 local list3 = {} --icon array
 local list4 = {} --goal array
-local created = {}
-local finished = {}
-local load=false
-local count
-local edit = false
-local delete
-local scroll = 0
-local value
-local shown = false
-local lock
-local editl
+local created = {} --frames created for that row
+local finished = {} --if goal has been reach, stays untill bellow goal again
+local load=false --on each load switch
+local count --count of current list to display
+local edit = false --edit button toggle
+local delete --stores liine - was clicked on
+local scroll = 0 --scroll offset number
+local value --size value for viewable
+local shown = false --main frame display toggle
+local lock --lock postion scale toggle
+local editl --removes + - signs
 local getList --function declaration
 local getID --""
 local save --""
@@ -43,7 +38,7 @@ local scaleset --""
 local reset --""
 --
 
---init on each reload/login
+--init
 local UIMain = CreateFrame("Frame", "CAmain", UIParent, "BasicFrameTemplateWithInset")
 local function init()
 	-- load saved globals
@@ -53,7 +48,6 @@ local function init()
 	shown = CASAVEcount[3]
 	lock = CASAVEcount[4]
 	editl = CASAVEcount[5]
-	created = CASAVEcreated
 	list4 = CASAVElist4
 	finished = CASAVEfinished
 	--
@@ -683,7 +677,6 @@ end
 function reset()
 	CASAVElist = {}
 	CASAVEcount = {}
-	CASAVEcreated = {}
 	CASAVElist4 = {}
 	CASAVEfinished = {}
 	CASAVEcount[4] = false
@@ -716,7 +709,6 @@ function save()
 	CASAVElist = list
 	CASAVEcount[1] = count
 	CASAVEcount[2] = value
-	CASAVEcreated = created
 	CASAVElist4 = list4
 	CASAVEfinished = finished
 	CASAVEcount[3] = UIMain:IsShown()

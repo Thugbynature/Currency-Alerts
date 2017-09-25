@@ -4,6 +4,6 @@
 ## Notes: Keeps track of chosen currencies, with alerts. v0.2.2
 ## Author: Souless
 ## DefaultState: enabled
-## SavedVariablesPerCharacter: CASAVElist, CASAVElist4, CASAVEcount, CASAVEcreated, CASAVEfinished
+## SavedVariablesPerCharacter: CASAVElist, CASAVElist4, CASAVEcount, CASAVEfinished
 
 Currency-Alerts.lua
