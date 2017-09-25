@@ -7,6 +7,8 @@
 -- maybe create own BasicFrameTemplateWithInset and its parents and make it custom
 
 --***** if close buttons work change all other buttons to that style
+--***** create textures for frames, change the typed symbols for the icons, might need to be white for new black design
+--"" might want to make X for close turn red on hover over but stay black normally, maybe with a bit of an outline
 
 -- ///// test that save still workes with CASAVEcreated removed
 -- ///// test new appearance
