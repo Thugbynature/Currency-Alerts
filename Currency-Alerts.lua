@@ -1,6 +1,6 @@
 -- better alert (quest compleate popup)
 -- add gold (would need a system on display to show like 10k, 100k, 1m without going over scale)
--- frame template cool looking
+-- frame template cool looking (template idea, have the colors be ofsets from a primary tone, allow users to pick from tones then it tints for certain places)
 -- quest partial compleate alert (aka when i kill 10/10 5/6 10 would alert on finish)
 -- weekly seals warning
 -- get a wow art viewer and find cooler arrow buttons, move symble and options button.
@@ -8,6 +8,7 @@
 
 --***** if close buttons work change all other buttons to that style
 
+-- ///// test that save still workes with CASAVEcreated removed
 -- ///// test new appearance
 -- ///// test close buttons and on click look
 
