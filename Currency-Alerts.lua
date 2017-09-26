@@ -131,6 +131,14 @@ UIMain.title = UIMain:CreateFontString(nil, "ARTWORK")
 UIMain.title:SetFontObject("GameFontHighlight")
 UIMain.title:SetPoint("LEFT", UIMain.titlef, "LEFT", 5, 0)
 UIMain.title:SetText("|cffffff00Currency Alerts")
+--Alert
+UIMain.alert = CreateFrame("Frame", "CAmain", UIParent, "")
+UIMain.alert:SetPoint("Center", UIParent, "Center", 0, 0)
+UIMain.alert:SetSize(500, 500)
+UIMain.alert.bg = UIMain.alert:CreateTexture(nil , "BACKGROUND")
+UIMain.alert.bg:SetAllPoints(UIMain.alert)
+UIMain.alert.bg:SetColorTexture(0, 0, 0, .25)
+UIMain.alert:SetShown(false)
 --Buttons
 --Close
 UIMain.close = CreateFrame("Button", nil, UIMain, "")
