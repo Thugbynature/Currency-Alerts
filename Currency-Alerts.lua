@@ -3,8 +3,6 @@
 -- frame template cool looking (template idea, have the colors be ofsets from a primary tone, allow users to pick from tones then it tints for certain places)
 -- quest partial compleate alert (aka when i kill 10/10 5/6 10 would alert on finish)
 -- weekly seals warning
--- get a wow art viewer and find cooler arrow buttons, move symble and options button.
--- maybe create own BasicFrameTemplateWithInset and its parents and make it custom
 
 --"" might want to make X for close turn red on hover over but stay black normally, maybe with a bit of an outline
 --***** move new icons to wow folder
