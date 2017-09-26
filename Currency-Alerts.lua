@@ -470,15 +470,15 @@ function (self, button)
 end)
 -- Add Editbox
 UIMain.addbox = CreateFrame("EditBox", "CAmain", UIMain, "InputBoxTemplate")
-UIMain.addbox:SetSize(65,20)
+UIMain.addbox:SetSize(55,20)
 UIMain.addbox:SetAutoFocus(false)
-UIMain.addbox:SetPoint("RIGHT", UIMain.titlef, "RIGHT", 90, 0)
+UIMain.addbox:SetPoint("RIGHT", UIMain.titlef, "RIGHT", -90, 0)
 UIMain.addbox:SetJustifyH("RIGHT")
 UIMain.addbox:SetText("Name")
 UIMain.addbox:SetShown(false)
 UIMain.addbox:SetScript("OnEditFocusGained",
 function (self) 
-	if self:GetText() == "Enter Name" then
+	if self:GetText() == "Name" then
 		self:SetText("")
 	end
 	if self:GetText() == "Invalid" then
@@ -511,7 +511,7 @@ UIMain.addbox:SetScript("OnEnterPressed",
 						if(test == true) then 
 							count = count+1
 							list[count] = self:GetText()
-							self:SetText("Enter Name")
+							self:SetText("Name")
 							getList()
 							PopulateLines()
 							self:ClearFocus()
