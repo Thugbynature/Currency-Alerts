@@ -1,40 +1,40 @@
 -- better alert (quest compleate popup)
 -- add gold (would need a system on display to show like 10k, 100k, 1m without going over scale)
--- frame template cool looking
+-- frame template cool looking (template idea, have the colors be ofsets from a primary tone, allow users to pick from tones then it tints for certain places)
 -- quest partial compleate alert (aka when i kill 10/10 5/6 10 would alert on finish)
 -- weekly seals warning
 -- get a wow art viewer and find cooler arrow buttons, move symble and options button.
 -- maybe create own BasicFrameTemplateWithInset and its parents and make it custom
 
---///// test keeping visability after relog, also look into BasicFrameTemplateWithInset and see what the x button does and if save can happen off of it
---///// test the scale change not moving on size change and on remove (scaleset())
---///// test settings, lock, edit, and reset
-
+--***** if close buttons work change all other buttons to that style
+--***** create textures for frames, change the typed symbols for the icons, might need to be white for new black design
+--"" might want to make X for close turn red on hover over but stay black normally, maybe with a bit of an outline
+--***** rename icons and put them in a seperate folder
+--***** look into quest compleate alert and add how to add to it, if thats is too hard create a frame with a movable toggle and resize and display alearts on it
 
 --SAVED VARIABLES
 CASAVElist = {}
 CASAVElist4 = {}
 CASAVEcount = {}
-CASAVEcreated = {}
 CASAVEfinished = {}
 --
 
 --Local Variables
-local list = {}; --name array
-local list2 = {}; --amount array
-local list3 = {}; --icon array
-local list4 = {}; --goal array
-local created = {}
-local finished = {}
-local load=false
-local count
-local edit = false
-local delete
-local scroll = 0
-local value
-local shown = false
-local lock
-local editl
+local list = {} --name array
+local list2 = {} --amount array
+local list3 = {} --icon array
+local list4 = {} --goal array
+local created = {} --frames created for that row
+local finished = {} --if goal has been reach, stays untill bellow goal again
+local load=false --on each load switch
+local count --count of current list to display
+local edit = false --edit button toggle
+local delete --stores liine - was clicked on
+local scroll = 0 --scroll offset number
+local value --size value for viewable
+local shown = false --main frame display toggle
+local lock --lock postion scale toggle
+local editl --removes + - signs
 local getList --function declaration
 local getID --""
 local save --""
@@ -43,8 +43,17 @@ local scaleset --""
 local reset --""
 --
 
---init on each reload/login
-local UIMain = CreateFrame("Frame", "CAmain", UIParent, "BasicFrameTemplateWithInset")
+--frame declarations
+local UIMain = CreateFrame("Frame", "CAmain", UIParent, "")
+UIMain.goal = {}
+UIMain.icon = {}
+UIMain.line = {}
+UIMain.content = {}
+UIMain.amount = {}
+UIMain.remove = {}
+UIMain.resetcf = {}
+
+--init
 local function init()
 	-- load saved globals
 	list = CASAVElist
@@ -53,25 +62,24 @@ local function init()
 	shown = CASAVEcount[3]
 	lock = CASAVEcount[4]
 	editl = CASAVEcount[5]
-	created = CASAVEcreated
 	list4 = CASAVElist4
 	finished = CASAVEfinished
 	--
 
 	--No saves/First run
 	if (count == nil) then
-		list[1] = "veiled argunite";
-		list[2] = "seal of broken fate";
-		list[3] = "order resources";
-		list[4] = "nethershard";
+		list[1] = "veiled argunite"
+		list[2] = "seal of broken fate"
+		list[3] = "order resources"
+		list[4] = "nethershard"
 		list[5] = "legionfall war supplies"
-		list[6] = "curious coin";
-		list[7] = "ancient mana";
-		list[8] = "darkmoon prize ticket";
-		list[9] = "brawler's gold";
-		list[10] = "coins of air";
-		count = 10;
-		value = 10;
+		list[6] = "curious coin"
+		list[7] = "ancient mana"
+		list[8] = "darkmoon prize ticket"
+		list[9] = "brawler's gold"
+		list[10] = "coins of air"
+		count = 10
+		value = 10
 		for i=1,20,1 do	list4[i] = 0 end
 		shown = true
 		for i=1,20,1 do	finished[i] = false end
@@ -84,15 +92,15 @@ local function init()
 	if not UIMain.cblock:GetChecked() then UIMain.move:SetShown(true) end
 	for i=1,20,1 do	created[i] = false end
 	scroll = 0
-	UIMain:SetSize(300, (value * 20)+40)
-	if shown == true then UIMain.up:SetShown(true) else UIMain.up:SetShown(false) end
+	UIMain:SetSize(280, (value * 20)+30)
+	if shown == true then UIMain:SetShown(true) else UIMain:SetShown(false) end
 end
 
 -- Event Handlers
 local function OnEvent(frame, event, ...)
 	if (event == "PLAYER_LOGIN") then
 		init()
-		load = true;
+		load = true
 		getList()
 		PopulateLines()
 	elseif (event == "CURRENCY_DISPLAY_UPDATE") then
@@ -106,33 +114,61 @@ end
 
 --UI
 --Frame
-UIMain.goal = {}
-UIMain.icon = {}
-UIMain.line = {}
-UIMain.content = {}
-UIMain.amount = {}
-UIMain.remove = {}
-UIMain.resetcf = {}
+UIMain.bg = UIMain:CreateTexture(nil , "BACKGROUND")
+UIMain.bg:SetAllPoints(UIMain)
+UIMain.bg:SetColorTexture(0, 0, 0, .75)
 UIMain:SetMovable(true)
 UIMain.enableMouse="true"
 UIMain:SetScript("OnEvent", OnEvent)
 UIMain:RegisterEvent("PLAYER_LOGIN")
-UIMain:RegisterEvent("CHAT_MSG_CURRENCY")
 UIMain:RegisterEvent("CURRENCY_DISPLAY_UPDATE")
-UIMain:SetSize(300, 200);
-UIMain:SetMinResize(300,100)
-UIMain:SetMaxResize(300,440)
+UIMain:SetSize(280, 200)
+UIMain:SetMinResize(280,90)
+UIMain:SetMaxResize(280,420)
 UIMain:SetResizable(true)
-UIMain:SetPoint("TOPLEFT", UIParent, "BOTTOMRIGHT", -450, 350);
-UIMain.title = UIMain:CreateFontString(nil, "ARTWORK");
-UIMain.title:SetFontObject("GameFontHighlight");
-UIMain.title:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 5, 0);
-UIMain.title:SetText("|cffffff00Currency Alerts");
+UIMain:SetPoint("TOPLEFT", UIParent, "BOTTOMRIGHT", -450, 350)
+UIMain.titlef = UIMain:CreateTexture(nil , "BACKGROUND")
+UIMain.titlef:SetColorTexture(0, 0, 0, .85)
+UIMain.titlef:SetPoint("TOPLEFT", UIMain, "TOPLEFT")
+UIMain.titlef:SetPoint("BOTTOMRIGHT", UIMain, "TOPRIGHT", -20, -20)
+UIMain.title = UIMain:CreateFontString(nil, "BACKGROUND")
+UIMain.title:SetFontObject("GameFontHighlight")
+UIMain.title:SetPoint("LEFT", UIMain.titlef, "LEFT", 5, 0)
+UIMain.title:SetText("|cffffff00Currency Alerts")
 --Buttons
+--Close
+UIMain.close = CreateFrame("Button", nil, UIMain, "")
+UIMain.close:SetPoint("TOPRIGHT", UIMain, "TOPRIGHT")
+UIMain.close:SetSize(20,20)
+UIMain.close.bg = UIMain.close:CreateTexture(nil , "BACKGROUND")
+UIMain.close.bg:SetAllPoints(UIMain.close)
+UIMain.close.bg:SetColorTexture(1, 0, 0, 1)
+UIMain.close.icon = UIMain.close:CreateTexture(nil , "ARTWORK")
+UIMain.close.icon:SetAllPoints(UIMain.close)
+UIMain.close.icon:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\x.blp")
+UIMain.close:SetScript("OnClick",
+function (self, button)
+	if (button == "LeftButton")then
+		UIMain:SetShown(false)
+		save()
+	end
+end)
+UIMain.close:SetScript("OnMouseDown",
+function (self, button)
+	if (button == "LeftButton")then
+		UIMain.close.bg:SetColorTexture(.3, 0, 0, 1)
+	end
+end)
+UIMain.close:SetScript("OnMouseUp",
+function (self, button)
+	if (button == "LeftButton")then
+		UIMain.close.bg:SetColorTexture(255, 0, 0, 1)
+	end
+end)
 --Edit
 UIMain.edit = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.edit:SetPoint("RIGHT", UIMain.TitleBg, "RIGHT", 0, 0)
-UIMain.edit:SetSize(75,17)
+UIMain.edit:SetPoint("RIGHT", UIMain.titlef, "RIGHT")
+UIMain.edit:SetSize(75,20)
 UIMain.edit:SetText("Edit Goals")
 UIMain.edit:SetScript("OnClick",
 function (self, button)
@@ -143,7 +179,7 @@ function (self, button)
 				UIMain.goal[i]:SetText(UIMain.goal[i]:GetText())
 				UIMain.goal[i]:SetTextColor(1,1,1,1)
 			end
-			edit = true;
+			edit = true
 		else
 			for i=1, count, 1 do
 				UIMain.goal[i]:Disable()
@@ -152,13 +188,13 @@ function (self, button)
 					UIMain.goal[i]:SetTextColor(1,1,1,.3)
 				end
 			end
-			edit = false;
+			edit = false
 		end
 	end
 end)
 --Add
 UIMain.add = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.add:SetPoint("RIGHT", UIMain.TitleBg, "RIGHT", -75, 0)
+UIMain.add:SetPoint("RIGHT", UIMain.titlef, "RIGHT", -73, 0)
 UIMain.add:SetSize(17,17)
 UIMain.add:SetText("+")
 UIMain.add:SetScript("OnClick",
@@ -175,8 +211,8 @@ function (self, button)
 end)
 --Settingsb
 UIMain.settingsb = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.settingsb:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 95, 0)
-UIMain.settingsb:SetSize(17,17)
+UIMain.settingsb:SetPoint("LEFT", UIMain.titlef, "LEFT", 95, 0)
+UIMain.settingsb:SetSize(20,20)
 UIMain.settingsb:SetText("*")
 UIMain.settingsb:SetScript("OnClick",
 function (self, button)
@@ -197,20 +233,20 @@ function (self, button)
 end)
 --Scroll Up
 UIMain.up = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.up:SetPoint("TOPRIGHT", UIMain, "TOPRIGHT", -7, -25)
+UIMain.up:SetPoint("TOPRIGHT", UIMain, "TOPRIGHT", 0, -23)
 UIMain.up:SetSize(20,20)
 UIMain.up:SetText("^")
 UIMain.up:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
 		if scroll > 0 then scroll = scroll-1 end
-		UIMain.content:SetPoint("TOP", 0, -30 + (scroll*20))
+		UIMain.content:SetPoint("TOP", 0, -25 + (scroll*20))
 		PopulateLines()
 	end
 end)
 --Scroll down
 UIMain.down = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.down:SetPoint("BOTTOMRIGHT", UIMain, "BOTTOMRIGHT",-7, 7)
+UIMain.down:SetPoint("BOTTOMRIGHT", UIMain, "BOTTOMRIGHT", 0, 3)
 UIMain.down:SetSize(20,20)
 UIMain.down:SetText("v")
 UIMain.down:SetScript("OnMouseDown",
@@ -218,15 +254,15 @@ function (self, button)
 	if (button == "LeftButton")then
 		if (value + scroll +1) <= count then
 			scroll = scroll+1
-			UIMain.content:SetPoint("TOP", 0, -30 + (scroll*20))
+			UIMain.content:SetPoint("TOP", 0, -25 + (scroll*20))
 			PopulateLines()
 		end
 	end
 end)
 --Move
 UIMain.move = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
-UIMain.move:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 110, 0)
-UIMain.move:SetSize(17,17)
+UIMain.move:SetPoint("LEFT", UIMain.titlef, "LEFT", 115, 0)
+UIMain.move:SetSize(20,20)
 UIMain.move:SetText("^")
 UIMain.move:SetScript("OnMouseDown",
 function (self, button)
@@ -243,7 +279,7 @@ end)
 --Resize
 UIMain.size = CreateFrame("Button", nil, UIMain, "")
 UIMain.size:SetPoint("Bottom", UIMain, "Bottom")
-UIMain.size:SetSize(300,8	)
+UIMain.size:SetSize(300,8)
 UIMain.size:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
@@ -270,22 +306,25 @@ function (self, button)
 end)
 --ContentFrame
 UIMain.content = CreateFrame("Frame", "CAmain", UIMain, "")
-UIMain.content:SetPoint("TOP", 0, -30)
-UIMain.content:SetSize(280,400)
+UIMain.content:SetPoint("TOP", 0, -25)
+UIMain.content:SetSize(270,400)
 --Settings
 UIMain.settings = CreateFrame("Frame", "CAmain", UIMain, "")
 UIMain.settings:SetToplevel(true)
-UIMain.settings:SetPoint("TOPLEFT", UIMain, "TOPLEFT", 10,-30);
-UIMain.settings:SetPoint("BOTTOMRIGHT", UIMain, "BOTTOMRIGHT", -10, 10);
+UIMain.settings:SetPoint("TOPLEFT", UIMain, "TOPLEFT", 5,-25)
+UIMain.settings:SetPoint("BOTTOMRIGHT", UIMain, "BOTTOMRIGHT", -5, 5)
 UIMain.settings:SetShown(false)
+UIMain.settings.bg =UIMain.settings:CreateTexture(nil , "BACKGROUND")
+UIMain.settings.bg:SetAllPoints(UIMain.settings)
+UIMain.settings.bg:SetColorTexture(.1, .1, .1, .8)
 UIMain.cblock =  CreateFrame("CheckButton", "CAmain", UIMain.settings, "UICheckButtonTemplate")
 UIMain.cblock:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, 3)
 UIMain.cblock:SetSize(20,20)
 UIMain.cblock:SetChecked(not lock)
-UIMain.cblockt = UIMain.settings:CreateFontString(nil, "ARTWORK");
-UIMain.cblockt:SetFontObject("GameFontHighlight");
-UIMain.cblockt:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 17, 0);
-UIMain.cblockt:SetText("Lock Frame");
+UIMain.cblockt = UIMain.settings:CreateFontString(nil, "BACKGROUND")
+UIMain.cblockt:SetFontObject("GameFontHighlight")
+UIMain.cblockt:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 17, 0)
+UIMain.cblockt:SetText("Lock Frame")
 UIMain.cblock:SetScript("PostClick",
 function (self, button, down)
 	if self:GetChecked() then
@@ -299,13 +338,13 @@ function (self, button, down)
 	end
 end)
 UIMain.cblist =  CreateFrame("CheckButton", "CAmain", UIMain.settings, "UICheckButtonTemplate")
-UIMain.cblist:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, -17)
+UIMain.cblist:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, -15)
 UIMain.cblist:SetSize(20,20)
 UIMain.cblist:SetChecked(UIMain.move:IsShown())
-UIMain.cblistt = UIMain.settings:CreateFontString(nil, "ARTWORK");
-UIMain.cblistt:SetFontObject("GameFontHighlight");
-UIMain.cblistt:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 17, -20);
-UIMain.cblistt:SetText("Edit List");
+UIMain.cblistt = UIMain.settings:CreateFontString(nil, "BACKGROUND")
+UIMain.cblistt:SetFontObject("GameFontHighlight")
+UIMain.cblistt:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 17, -17)
+UIMain.cblistt:SetText("Edit List")
 UIMain.cblist:SetScript("PostClick",
 function (self, button, down)
 	if self:GetChecked() then
@@ -321,7 +360,7 @@ function (self, button, down)
 	end
 end)
 UIMain.reset = CreateFrame("Button", nil, UIMain.settings, "GameMenuButtonTemplate")
-UIMain.reset:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, -40)
+UIMain.reset:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, -35)
 UIMain.reset:SetSize(60,20)
 UIMain.reset:SetText("Reset")
 UIMain.reset:SetScript("OnClick",
@@ -335,7 +374,7 @@ function (self, button)
 	end
 end)
 UIMain.resetcf = CreateFrame("Button", nil, UIMain.settings, "GameMenuButtonTemplate")
-UIMain.resetcf:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 70, -40)
+UIMain.resetcf:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 63, -35)
 UIMain.resetcf:SetSize(60,20)
 UIMain.resetcf:SetText("Confirm")
 UIMain.resetcf:SetShown(false)
@@ -346,17 +385,20 @@ function (self, button)
 	end
 end)
 --ConfirmRemoveFrame
-UIMain.confirm = CreateFrame("Frame", "CAmain", UIMain, "BasicFrameTemplateWithInset")
+UIMain.confirm = CreateFrame("Frame", "CAmain", UIMain, "")
 UIMain.confirm:SetToplevel(true)
-UIMain.confirm:SetSize(75, 55);
-UIMain.confirm:SetPoint("CENTER", UIMain, "CENTER", 175, 0);
-UIMain.confirm:SetShown(false) 
-UIMain.ctitle = UIMain.confirm:CreateFontString(nil, "OVERLAY");
-UIMain.ctitle:SetFontObject("GameFontHighlight");
-UIMain.ctitle:SetPoint("LEFT", UIMain.confirm.TitleBg, "LEFT", 5, 0);
-UIMain.ctitle:SetText("|cffffff00Confirm");UIMain.edit = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
+UIMain.confirm:SetSize(70, 50)
+UIMain.confirm:SetPoint("CENTER", UIMain, "CENTER")
+UIMain.confirm.bg = UIMain.confirm:CreateTexture(nil , "BACKGROUND")
+UIMain.confirm.bg:SetAllPoints(UIMain.confirm)
+UIMain.confirm.bg:SetColorTexture(0, 0, 0, .9)
+UIMain.confirm:SetShown(false)
+UIMain.ctitle = UIMain.confirm:CreateFontString(nil, "OVERLAY")
+UIMain.ctitle:SetFontObject("GameFontHighlight")
+UIMain.ctitle:SetPoint("TOPLEFT", UIMain.confirm, "TOPLEFT", 1, -5)
+UIMain.ctitle:SetText("|cffffff00Confirm")
 UIMain.cf = CreateFrame("Button", nil, UIMain.confirm, "GameMenuButtonTemplate")
-UIMain.cf:SetPoint("CENTER", UIMain.confirm, "CENTER", 0, -10)
+UIMain.cf:SetPoint("BOTTOMLEFT", UIMain.confirm, "BOTTOMLEFT", 5, 3)
 UIMain.cf:SetSize(60,25)
 UIMain.cf:SetText("Delete")
 UIMain.cf:SetScript("OnClick",
@@ -399,11 +441,38 @@ function (self, button)
 		UIMain.confirm:SetShown(false)
 	end
 end)
+UIMain.cfcl = CreateFrame("Button", nil, UIMain.confirm, "")
+UIMain.cfcl:SetPoint("TOPRIGHT", UIMain.confirm, "TOPRIGHT")
+UIMain.cfcl:SetSize(20,20)
+UIMain.cfcl.icon = UIMain.cfcl:CreateTexture(nil , "ARTWORK")
+UIMain.cfcl.icon:SetAllPoints(UIMain.cfcl)
+UIMain.cfcl.icon:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\x.blp")
+UIMain.cfcl.bg = UIMain.cfcl:CreateTexture(nil , "BACKGROUND")
+UIMain.cfcl.bg:SetAllPoints(UIMain.cfcl)
+UIMain.cfcl.bg:SetColorTexture(1, 0, 0, 1)
+UIMain.cfcl:SetScript("OnClick",
+function (self, button)
+	if (button == "LeftButton")then
+		UIMain.confirm:SetShown(false)
+	end
+end)
+UIMain.cfcl:SetScript("OnMouseDown",
+function (self, button)
+	if (button == "LeftButton")then
+		UIMain.cfcl.bg:SetColorTexture(.3, 0, 0, 1)
+	end
+end)
+UIMain.cfcl:SetScript("OnMouseUp",
+function (self, button)
+	if (button == "LeftButton")then
+		UIMain.cfcl.bg:SetColorTexture(1, 0, 0, 1)
+	end
+end)
 -- Add Editbox
-UIMain.addbox = CreateFrame("EditBox", "CAmain", UIMain, "InputBoxTemplate");
-UIMain.addbox:SetSize(65,17)
+UIMain.addbox = CreateFrame("EditBox", "CAmain", UIMain, "InputBoxTemplate")
+UIMain.addbox:SetSize(65,20)
 UIMain.addbox:SetAutoFocus(false)
-UIMain.addbox:SetPoint("LEFT", UIMain.TitleBg, "LEFT", 117, 0)
+UIMain.addbox:SetPoint("RIGHT", UIMain.titlef, "RIGHT", 90, 0)
 UIMain.addbox:SetJustifyH("RIGHT")
 UIMain.addbox:SetText("Name")
 UIMain.addbox:SetShown(false)
@@ -466,13 +535,13 @@ function scaleset()
 	local w
 	local h
 	w, h = UIMain:GetSize()
-	h = h-40
+	h = h-20
 	value = math.floor(h/20)
 	if (value > count) then value = count end
 	if (value * 20) <60 then value = 3 end
-	UIMain:SetSize(w, (value * 20)+40)
+	UIMain:SetSize(w, (value * 20)+30)
 	scroll = 0
-	UIMain.content:SetPoint("TOP", 0, -30)
+	UIMain.content:SetPoint("TOP", 0, -25)
 	PopulateLines()
 end
 --
@@ -505,34 +574,30 @@ local IDlist = {
 	["lingering soul fragment"] = 1314,
 	["timewarped badge"] = 1166,
 	["sightless eye"] = 1149
-};
+}
 
 -- ID from name
 function getID(name)
 if (string.sub(name, 1, 1) == "[") then
 name = string.sub(name, 2, string.len(name)-1)
 end
-name = string.lower(name);
-local id = IDlist[name];
-return id;
+name = string.lower(name)
+local id = IDlist[name]
+return id
 end
 
 -- Get currency information from wow
 function getList()
 	for i=1, count, 1 do
-		local ins = {}
 		local ins1
 		local ins2
 		local ins3
 		if getID(list[i]) == nil then return nil end
 		ins1,ins2,ins3 = GetCurrencyInfo(getID(list[i]))
-		ins[1] = ins1
-		ins[2] = ins2
-		ins[3] = ins3
 		
-		list[i] = ins[1];
-		list2[i] = ins[2];
-		list3[i] = ins[3];
+		list[i] = ins1
+		list2[i] = ins2
+		list3[i] = ins3
 		if(list4[i] == nil) then list4[i] = 0 end
 	end
 end
@@ -549,22 +614,22 @@ function PopulateLines()
 					UIMain.icon[i]:SetTexture(list3[i])
 					UIMain.icon[i]:SetSize(20, 20)
 					-- Name
-					UIMain.line[i] = UIMain.content:CreateFontString(nil, "ARTWORK");
-					UIMain.line[i]:SetFontObject("GameFontHighlight");
-					UIMain.line[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 55, 15+(-i*20));
+					UIMain.line[i] = UIMain.content:CreateFontString(nil, "ARTWORK")
+					UIMain.line[i]:SetFontObject("GameFontHighlight")
+					UIMain.line[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 55, 15+(-i*20))
 					UIMain.line[i]:SetText("|cff00ffff" .. list[i])
 					-- Amount
-					UIMain.amount[i] = UIMain.content:CreateFontString(nil, "ARTWORK");
-					UIMain.amount[i]:SetFontObject("GameFontHighlight");
-					UIMain.amount[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 22, 15+(-i*20));
+					UIMain.amount[i] = UIMain.content:CreateFontString(nil, "ARTWORK")
+					UIMain.amount[i]:SetFontObject("GameFontHighlight")
+					UIMain.amount[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 22, 15+(-i*20))
 					UIMain.amount[i]:SetText(list2[i])
 					-- Goal
-					UIMain.goal[i] = CreateFrame("EditBox", "CAmain", UIMain.content, "InputBoxTemplate");
+					UIMain.goal[i] = CreateFrame("EditBox", "CAmain", UIMain.content, "InputBoxTemplate")
 					UIMain.goal[i]:SetSize(40,20)
 					UIMain.goal[i]:SetNumeric(true)
 					UIMain.goal[i]:SetMaxLetters(5)
 					UIMain.goal[i]:SetAutoFocus(false)
-					UIMain.goal[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 200, 20+(-i*20));
+					UIMain.goal[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 200, 20+(-i*20))
 					UIMain.goal[i]:SetText(tostring(list4[i]))
 					UIMain.goal[i]:SetTextColor(1,1,1,.3)
 					UIMain.goal[i]:SetJustifyH("RIGHT")
@@ -591,14 +656,14 @@ function PopulateLines()
 					UIMain.goal[i]:Disable()
 					-- Remove
 					UIMain.remove[i] = CreateFrame("Button", nil, UIMain.content, "GameMenuButtonTemplate")
-					UIMain.remove[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 245, 20+(-i*20));
+					UIMain.remove[i]:SetPoint("TOPLEFT", UIMain.content, "TOPLEFT", 240, 20+(-i*20))
 					UIMain.remove[i]:SetSize(20,20)
 					UIMain.remove[i]:SetText("-")
 					UIMain.remove[i]:SetScript("OnClick", 
 					function (self, button)
 						if (button == "LeftButton")then
 							if (edit == false) then
-								delete = i;
+								delete = i
 								UIMain.confirm:SetShown(true)
 							end
 						end
@@ -683,7 +748,6 @@ end
 function reset()
 	CASAVElist = {}
 	CASAVEcount = {}
-	CASAVEcreated = {}
 	CASAVElist4 = {}
 	CASAVEfinished = {}
 	CASAVEcount[4] = false
@@ -716,7 +780,6 @@ function save()
 	CASAVElist = list
 	CASAVEcount[1] = count
 	CASAVEcount[2] = value
-	CASAVEcreated = created
 	CASAVElist4 = list4
 	CASAVEfinished = finished
 	CASAVEcount[3] = UIMain:IsShown()
