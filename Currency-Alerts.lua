@@ -31,6 +31,7 @@ local value --size value for viewable
 local shown = false --main frame display toggle
 local lock --lock postion scale toggle
 local editl --removes + - signs
+local time = 0 --time for fading alert frame
 local getList --function declaration
 local getID --""
 local save --""
@@ -48,6 +49,8 @@ UIMain.content = {}
 UIMain.amount = {}
 UIMain.remove = {}
 UIMain.resetcf = {}
+UIMain.alert = {}
+UIMain.alert.text = {}
 
 --init
 local function init()
@@ -92,7 +95,7 @@ local function init()
 	if shown == true then UIMain:SetShown(true) else UIMain:SetShown(false) end
 end
 
--- Event Handlers
+--UIMain Event Handlers
 local function OnEvent(frame, event, ...)
 	if (event == "PLAYER_LOGIN") then
 		init()
@@ -135,10 +138,29 @@ UIMain.title:SetText("|cffffff00Currency Alerts")
 UIMain.alert = CreateFrame("Frame", "CAmain", UIParent, "")
 UIMain.alert:SetPoint("Center", UIParent, "Center", 0, 0)
 UIMain.alert:SetSize(500, 500)
+UIMain.alert:SetScript("OnEvent", OnEvent)
+UIMain.alert:RegisterEvent("PLAYER_LOGIN")
 UIMain.alert.bg = UIMain.alert:CreateTexture(nil , "BACKGROUND")
 UIMain.alert.bg:SetAllPoints(UIMain.alert)
 UIMain.alert.bg:SetColorTexture(0, 0, 0, .25)
+UIMain.alert.text = UIMain.alert:CreateFontString(nil, "ARTWORK")
+UIMain.alert.text:SetFontObject("GameFontHighlight")
+UIMain.alert.text:SetPoint("CENTER", UIMain.alert, "CENTER", 0, 0)
+UIMain.alert.text:SetText("")
 UIMain.alert:SetShown(false)
+UIMain.alert:SetScript("OnUpdate",
+function ()
+	if time > 0 then
+		if time < GetTime() - 3 then
+			local alpha = UIMain.alert.text:GetAlpha()
+			if alpha > 0 then UIMain.alert.text:SetAlpha(alpha-.05)
+			else
+				UIMain.alert:SetShown(false)
+				time = 0
+			end
+		end
+	end
+end)
 --Buttons
 --Close
 UIMain.close = CreateFrame("Button", nil, UIMain, "")
@@ -892,6 +914,10 @@ function PopulateLines()
 						if finished[i] == false then
 							UIMain.line[i]:SetText("|cffffcc00" .. list[i])
 							print("|cffffcc00" .. list[i] .. " has reached the Goal!")
+							UIMain.alert.text:SetText("|cffffcc00" .. list[i] .. " has reached the Goal!")
+							UIMain.alert:SetShown(true)
+							UIMain.alert.text:SetAlpha(1)
+							time = GetTime()
 							PlaySound(888 , "SFX")
 							finished[i] = true
 						end
