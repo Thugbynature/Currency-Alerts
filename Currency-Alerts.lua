@@ -131,7 +131,7 @@ UIMain.titlef = UIMain:CreateTexture(nil , "BACKGROUND")
 UIMain.titlef:SetColorTexture(0, 0, 0, .85)
 UIMain.titlef:SetPoint("TOPLEFT", UIMain, "TOPLEFT")
 UIMain.titlef:SetPoint("BOTTOMRIGHT", UIMain, "TOPRIGHT", -20, -20)
-UIMain.title = UIMain:CreateFontString(nil, "BACKGROUND")
+UIMain.title = UIMain:CreateFontString(nil, "ARTWORK")
 UIMain.title:SetFontObject("GameFontHighlight")
 UIMain.title:SetPoint("LEFT", UIMain.titlef, "LEFT", 5, 0)
 UIMain.title:SetText("|cffffff00Currency Alerts")
@@ -166,11 +166,17 @@ function (self, button)
 	end
 end)
 --Edit
-UIMain.edit = CreateFrame("Button", nil, UIMain, "GameMenuButtonTemplate")
+UIMain.edit = CreateFrame("Button", nil, UIMain, "")
 UIMain.edit:SetPoint("RIGHT", UIMain.titlef, "RIGHT")
 UIMain.edit:SetSize(75,20)
-UIMain.edit:SetText("Edit Goals")
-UIMain.edit:SetScript("OnClick",
+UIMain.edit.bg = UIMain.edit:CreateTexture(nil , "BACKGROUND")
+UIMain.edit.bg:SetAllPoints(UIMain.edit)
+UIMain.edit.bg:SetColorTexture(1, 0, 0, 1)
+UIMain.edit.t = UIMain.edit:CreateFontString(nil, "ARTWORK")
+UIMain.edit.t:SetFontObject("GameFontHighlight")
+UIMain.edit.t:SetPoint("CENTER", UIMain.edit, "CENTER")
+UIMain.edit.t:SetText("Edit Goals")
+UIMain.edit.t:SetScript("OnClick",
 function (self, button)
 	if (button == "LeftButton")then
 		if (edit == false) then
@@ -190,6 +196,18 @@ function (self, button)
 			end
 			edit = false
 		end
+	end
+end)
+UIMain.edit:SetScript("OnMouseDown",
+function (self, button)
+	if (button == "LeftButton")then
+		UIMain.edit.bg:SetColorTexture(.3, 0, 0, 1)
+	end
+end)
+UIMain.edit:SetScript("OnMouseUp",
+function (self, button)
+	if (button == "LeftButton")then
+		UIMain.edit.bg:SetColorTexture(255, 0, 0, 1)
 	end
 end)
 --Add
