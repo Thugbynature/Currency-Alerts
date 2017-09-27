@@ -5,11 +5,7 @@
 -- weekly seals warning
 
 --"" might want to make X for close turn red on hover over but stay black normally, maybe with a bit of an outline
---***** move new icons to wow folder
 --***** look into quest compleate alert and add how to add to it, if thats is too hard create a frame with a movable toggle and resize and display alearts on it
-
---///// test UI
---///// test alert
 
 --SAVED VARIABLES
 CASAVElist = {}
