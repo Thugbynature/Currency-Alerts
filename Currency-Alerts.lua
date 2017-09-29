@@ -1,4 +1,3 @@
--- better alert (quest compleate popup)
 -- add gold (would need a system on display to show like 10k, 100k, 1m without going over scale)
 -- frame template cool looking (template idea, have the colors be ofsets from a primary tone, allow users to pick from tones then it tints for certain places)
 -- quest partial compleate alert (aka when i kill 10/10 5/6 10 would alert on finish)
@@ -7,6 +6,7 @@
 --Create new custom UI buttons, darker red that glow on click
 --"" might want to make X for close turn red on hover over but stay black normally, maybe with a bit of an outline
 --***** look into quest compleate alert and add how to add to it, if thats is too hard create a frame with a movable toggle and resize and display alearts on it
+--*****add buttons new textures to folder
 
 --SAVED VARIABLES
 CASAVElist = {}
@@ -163,7 +163,7 @@ UIMain.alert:SetShown(false)
 UIMain.alert:SetScript("OnUpdate",
 function ()
 	if time > 0 then
-		if time < GetTime() - 5 then
+		if time < GetTime() - 7 then
 			local alpha = UIMain.alert.text:GetAlpha()
 			if alpha > 0 then UIMain.alert.text:SetAlpha(alpha-.05)
 			else
@@ -180,7 +180,7 @@ UIMain.close:SetPoint("TOPRIGHT", UIMain, "TOPRIGHT")
 UIMain.close:SetSize(20,20)
 UIMain.close.bg = UIMain.close:CreateTexture(nil , "BACKGROUND")
 UIMain.close.bg:SetAllPoints(UIMain.close)
-UIMain.close.bg:SetColorTexture(.6, 0, 0, 1)
+UIMain.close.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 UIMain.close.icon = UIMain.close:CreateTexture(nil , "ARTWORK")
 UIMain.close.icon:SetAllPoints(UIMain.close)
 UIMain.close.icon:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\x.blp")
@@ -194,13 +194,13 @@ end)
 UIMain.close:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
-		UIMain.close.bg:SetColorTexture(.3, 0, 0, 1)
+		UIMain.close.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\buttonpressed.blp")
 	end
 end)
 UIMain.close:SetScript("OnMouseUp",
 function (self, button)
 	if (button == "LeftButton")then
-		UIMain.close.bg:SetColorTexture(.6, 0, 0, 1)
+		UIMain.close.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 	end
 end)
 --Edit
@@ -209,7 +209,8 @@ UIMain.edit:SetPoint("RIGHT", UIMain.titlef, "RIGHT",-2,0)
 UIMain.edit:SetSize(65,15)
 UIMain.edit.bg = UIMain.edit:CreateTexture(nil , "BACKGROUND")
 UIMain.edit.bg:SetAllPoints(UIMain.edit)
-UIMain.edit.bg:SetColorTexture(.6, 0, 0, 1)
+UIMain.edit.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
+UIMain.edit.bg:SetHorizTile(true) -- TEST
 UIMain.edit.t = UIMain.edit:CreateFontString(nil, "ARTWORK")
 UIMain.edit.t:SetFontObject("GameFontHighlight")
 UIMain.edit.t:SetPoint("CENTER", UIMain.edit, "CENTER")
@@ -223,7 +224,7 @@ function (self, button)
 				UIMain.goal[i]:SetText(UIMain.goal[i]:GetText())
 				UIMain.goal[i]:SetTextColor(1,1,1,1)
 			end
-			UIMain.edit.bg:SetColorTexture(.3, 0, 0, 1)
+			UIMain.edit.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\buttonpressed.blp")
 			edit = true
 		else
 			for i=1, count, 1 do
@@ -233,7 +234,7 @@ function (self, button)
 					UIMain.goal[i]:SetTextColor(1,1,1,.2)
 				end
 			end
-			UIMain.edit.bg:SetColorTexture(255, 0, 0, 1)
+			UIMain.edit.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 			edit = false
 		end
 	end
@@ -244,7 +245,7 @@ UIMain.add:SetPoint("RIGHT", UIMain.titlef, "RIGHT", -69, 0)
 UIMain.add:SetSize(15,15)
 UIMain.add.bg = UIMain.add:CreateTexture(nil , "BACKGROUND")
 UIMain.add.bg:SetAllPoints(UIMain.add)
-UIMain.add.bg:SetColorTexture(.6, 0, 0, 1)
+UIMain.add.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 UIMain.add.icon = UIMain.add:CreateTexture(nil , "ARTWORK")
 UIMain.add.icon:SetAllPoints(UIMain.add)
 UIMain.add.icon:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\plus.blp")
@@ -263,13 +264,13 @@ end)
 UIMain.add:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
-		UIMain.add.bg:SetColorTexture(.3, 0, 0, 1)
+		UIMain.add.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\buttonpressed.blp")
 	end
 end)
 UIMain.add:SetScript("OnMouseUp",
 function (self, button)
 	if (button == "LeftButton")then
-		UIMain.add.bg:SetColorTexture(.6, 0, 0, 1)
+		UIMain.add.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 	end
 end)
 --Settingsb
@@ -278,7 +279,7 @@ UIMain.settingsb:SetPoint("LEFT", UIMain.titlef, "LEFT", 98, 0)
 UIMain.settingsb:SetSize(17,17)
 UIMain.settingsb.bg = UIMain.settingsb:CreateTexture(nil , "BACKGROUND")
 UIMain.settingsb.bg:SetAllPoints(UIMain.settingsb)
-UIMain.settingsb.bg:SetColorTexture(.6, 0, 0, 1)
+UIMain.settingsb.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 UIMain.settingsb.icon = UIMain.settingsb:CreateTexture(nil , "ARTWORK")
 UIMain.settingsb.icon:SetPoint("TOPLEFT", UIMain.settingsb, "TOPLEFT", -1, 1)
 UIMain.settingsb.icon:SetPoint("BOTTOMRIGHT", UIMain.settingsb, "BOTTOMRIGHT", 1, -1)
@@ -290,14 +291,14 @@ function (self, button)
 			UIMain.settings:SetShown(false)
 			UIMain.content:SetShown(true)
 			UIMain.size:SetShown(not lock)
-			UIMain.settingsb.bg:SetColorTexture(.6, 0, 0, 1)
+			UIMain.settingsb.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 			PopulateLines()
 		else
 			UIMain.settings:SetShown(true)
 			UIMain.content:SetShown(false)
 			UIMain.down:SetShown(false)
 			UIMain.up:SetShown(false)
-			UIMain.settingsb.bg:SetColorTexture(.3, 0, 0, 1)
+			UIMain.settingsb.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\buttonpressed.blp")
 			UIMain.size:SetShown(false)
 		end
 	end
@@ -308,7 +309,7 @@ UIMain.up:SetPoint("TOPRIGHT", UIMain, "TOPRIGHT", 0, -23)
 UIMain.up:SetSize(17,17)
 UIMain.up.bg = UIMain.up:CreateTexture(nil , "BACKGROUND")
 UIMain.up.bg:SetAllPoints(UIMain.up)
-UIMain.up.bg:SetColorTexture(.6, 0, 0, 1)
+UIMain.up.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 UIMain.up.icon = UIMain.up:CreateTexture(nil , "ARTWORK")
 UIMain.up.icon:SetAllPoints(UIMain.up)
 UIMain.up.icon:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\up.blp")
@@ -323,13 +324,13 @@ end)
 UIMain.up:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
-		UIMain.up.bg:SetColorTexture(.3, 0, 0, 1)
+		UIMain.up.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\buttonpressed.blp")
 	end
 end)
 UIMain.up:SetScript("OnMouseUp",
 function (self, button)
 	if (button == "LeftButton")then
-		UIMain.up.bg:SetColorTexture(.6, 0, 0, 1)
+		UIMain.up.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 	end
 end)
 --Scroll down
@@ -338,7 +339,7 @@ UIMain.down:SetPoint("BOTTOMRIGHT", UIMain, "BOTTOMRIGHT", 0, 0)
 UIMain.down:SetSize(17,17)
 UIMain.down.bg = UIMain.down:CreateTexture(nil , "BACKGROUND")
 UIMain.down.bg:SetAllPoints(UIMain.down)
-UIMain.down.bg:SetColorTexture(.6, 0, 0, 1)
+UIMain.down.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 UIMain.down.icon = UIMain.down:CreateTexture(nil , "ARTWORK")
 UIMain.down.icon:SetAllPoints(UIMain.down)
 UIMain.down.icon:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\down.blp")
@@ -355,13 +356,13 @@ end)
 UIMain.down:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
-		UIMain.down.bg:SetColorTexture(.3, 0, 0, 1)
+		UIMain.down.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\buttonpressed.blp")
 	end
 end)
 UIMain.down:SetScript("OnMouseUp",
 function (self, button)
 	if (button == "LeftButton")then
-		UIMain.down.bg:SetColorTexture(.6, 0, 0, 1)
+		UIMain.down.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 	end
 end)
 --Move
@@ -370,7 +371,7 @@ UIMain.move:SetPoint("LEFT", UIMain.titlef, "LEFT", 117, 0)
 UIMain.move:SetSize(15,15)
 UIMain.move.bg = UIMain.move:CreateTexture(nil , "BACKGROUND")
 UIMain.move.bg:SetAllPoints(UIMain.move)
-UIMain.move.bg:SetColorTexture(.6, 0, 0, 1)
+UIMain.move.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 UIMain.move.icon = UIMain.move:CreateTexture(nil , "ARTWORK")
 UIMain.move.icon:SetPoint("TOPLEFT", UIMain.move, "TOPLEFT", 1, -1)
 UIMain.move.icon:SetPoint("BOTTOMRIGHT", UIMain.move, "BOTTOMRIGHT", -1, 1)
@@ -379,14 +380,14 @@ UIMain.move:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
 		self:GetParent():StartMoving()
-		UIMain.move.bg:SetColorTexture(.3, 0, 0, 1)
+		UIMain.move.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\buttonpressed.blp")
 	end
 end)
 UIMain.move:SetScript("OnMouseUp",
 function (self, button)
 	if (button == "LeftButton")then
 		self:GetParent():StopMovingOrSizing()
-		UIMain.move.bg:SetColorTexture(.6, 0, 0, 1)
+		UIMain.move.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 	end
 end)
 --Resize
@@ -477,7 +478,7 @@ UIMain.reset:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 0, -35)
 UIMain.reset:SetSize(60,20)
 UIMain.reset.bg = UIMain.reset:CreateTexture(nil , "BACKGROUND")
 UIMain.reset.bg:SetAllPoints(UIMain.reset)
-UIMain.reset.bg:SetColorTexture(.6, 0, 0, 1)
+UIMain.reset.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 UIMain.reset.t = UIMain.reset:CreateFontString(nil, "ARTWORK")
 UIMain.reset.t:SetFontObject("GameFontHighlight")
 UIMain.reset.t:SetPoint("CENTER", UIMain.reset, "CENTER")
@@ -495,13 +496,13 @@ end)
 UIMain.reset:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
-		UIMain.reset.bg:SetColorTexture(.3, 0, 0, 1)
+		UIMain.reset.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\buttonpressed.blp")
 	end
 end)
 UIMain.reset:SetScript("OnMouseUp",
 function (self, button)
 	if (button == "LeftButton")then
-		UIMain.reset.bg:SetColorTexture(.6, 0, 0, 1)
+		UIMain.reset.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 	end
 end)
 UIMain.resetcf = CreateFrame("Button", nil, UIMain.settings, "")
@@ -509,7 +510,7 @@ UIMain.resetcf:SetPoint("TOPLEFT", UIMain.settings, "TOPLEFT", 63, -35)
 UIMain.resetcf:SetSize(60,20)
 UIMain.resetcf.bg = UIMain.resetcf:CreateTexture(nil , "BACKGROUND")
 UIMain.resetcf.bg:SetAllPoints(UIMain.resetcf)
-UIMain.resetcf.bg:SetColorTexture(.6, 0, 0, 1)
+UIMain.resetcf.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 UIMain.resetcf.t = UIMain.resetcf:CreateFontString(nil, "ARTWORK")
 UIMain.resetcf.t:SetFontObject("GameFontHighlight")
 UIMain.resetcf.t:SetPoint("CENTER", UIMain.resetcf, "CENTER")
@@ -524,13 +525,13 @@ end)
 UIMain.resetcf:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
-		UIMain.resetcf.bg:SetColorTexture(.3, 0, 0, 1)
+		UIMain.resetcf.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\buttonpressed.blp")
 	end
 end)
 UIMain.resetcf:SetScript("OnMouseUp",
 function (self, button)
 	if (button == "LeftButton")then
-		UIMain.resetcf.bg:SetColorTexture(.6, 0, 0, 1)
+		UIMain.resetcf.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 	end
 end)
 --ConfirmRemoveFrame
@@ -551,7 +552,7 @@ UIMain.cf:SetPoint("BOTTOMLEFT", UIMain.confirm, "BOTTOMLEFT", 5, 3)
 UIMain.cf:SetSize(50,15)
 UIMain.cf.bg = UIMain.cf:CreateTexture(nil , "BACKGROUND")
 UIMain.cf.bg:SetAllPoints(UIMain.cf)
-UIMain.cf.bg:SetColorTexture(.6, 0, 0, 1)
+UIMain.cf.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 UIMain.cf.t = UIMain.cf:CreateFontString(nil, "ARTWORK")
 UIMain.cf.t:SetFontObject("GameFontHighlight")
 UIMain.cf.t:SetPoint("CENTER", UIMain.cf, "CENTER")
@@ -599,13 +600,13 @@ end)
 UIMain.cf:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
-		UIMain.cf.bg:SetColorTexture(.3, 0, 0, 1)
+		UIMain.cf.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\buttonpressed.blp")
 	end
 end)
 UIMain.cf:SetScript("OnMouseUp",
 function (self, button)
 	if (button == "LeftButton")then
-		UIMain.cf.bg:SetColorTexture(.6, 0, 0, 1)
+		UIMain.cf.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 	end
 end)
 UIMain.cfcl = CreateFrame("Button", nil, UIMain.confirm, "")
@@ -616,7 +617,7 @@ UIMain.cfcl.icon:SetAllPoints(UIMain.cfcl)
 UIMain.cfcl.icon:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\x.blp")
 UIMain.cfcl.bg = UIMain.cfcl:CreateTexture(nil , "BACKGROUND")
 UIMain.cfcl.bg:SetAllPoints(UIMain.cfcl)
-UIMain.cfcl.bg:SetColorTexture(.6, 0, 0, 1)
+UIMain.cfcl.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 UIMain.cfcl:SetScript("OnClick",
 function (self, button)
 	if (button == "LeftButton")then
@@ -626,13 +627,13 @@ end)
 UIMain.cfcl:SetScript("OnMouseDown",
 function (self, button)
 	if (button == "LeftButton")then
-		UIMain.cfcl.bg:SetColorTexture(.3, 0, 0, 1)
+		UIMain.cfcl.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\buttonpressed.blp")
 	end
 end)
 UIMain.cfcl:SetScript("OnMouseUp",
 function (self, button)
 	if (button == "LeftButton")then
-		UIMain.cfcl.bg:SetColorTexture(.6, 0, 0, 1)
+		UIMain.cfcl.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 	end
 end)
 -- Add Editbox
@@ -827,7 +828,7 @@ function PopulateLines()
 					UIMain.remove[i]:SetSize(15,15)
 					UIMain.remove[i].bg = UIMain.remove[i]:CreateTexture(nil , "BACKGROUND")
 					UIMain.remove[i].bg:SetAllPoints(UIMain.remove[i])
-					UIMain.remove[i].bg:SetColorTexture(.6, 0, 0, 1)
+					UIMain.remove[i].bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 					UIMain.remove[i].icon = UIMain.remove[i]:CreateTexture(nil , "ARTWORK")
 					UIMain.remove[i].icon:SetAllPoints(UIMain.remove[i])
 					UIMain.remove[i].icon:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\minus.blp")
@@ -843,13 +844,13 @@ function PopulateLines()
 					UIMain.remove[i]:SetScript("OnMouseDown",
 					function (self, button)
 						if (button == "LeftButton")then
-							self.bg:SetColorTexture(.3, 0, 0, 1)
+							self.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\buttonpressed.blp")
 						end
 					end)
 					UIMain.remove[i]:SetScript("OnMouseUp",
 					function (self, button)
 						if (button == "LeftButton")then
-							self.bg:SetColorTexture(.6, 0, 0, 1)
+							self.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 						end
 					end)
 					created[i] = true
@@ -948,7 +949,7 @@ function reset()
 	UIMain.size:SetShown(true)
 	UIMain.addbox:SetShown(false)
 	UIMain.confirm:SetShown(false)
-	UIMain.settingsb.bg:SetColorTexture(.6, 0, 0, 1)
+	UIMain.settingsb.bg:SetTexture("Interface\\AddOns\\Currency-Alerts\\icon\\button.blp")
 	init()
 	getList()
 	PopulateLines()
