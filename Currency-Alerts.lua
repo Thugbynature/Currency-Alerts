@@ -4,6 +4,7 @@
 -- quest partial compleate alert (aka when i kill 10/10 5/6 10 would alert on finish)
 -- weekly seals warning
 
+--Create new custom UI buttons, darker red that glow on click
 --"" might want to make X for close turn red on hover over but stay black normally, maybe with a bit of an outline
 --***** look into quest compleate alert and add how to add to it, if thats is too hard create a frame with a movable toggle and resize and display alearts on it
 
